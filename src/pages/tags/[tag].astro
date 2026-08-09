@@ -1,0 +1,49 @@
+---
+// [tag].astro — 某个标签下的所有文章
+// URL: /tags/<tag>/
+import Layout from '../../layouts/Layout.astro';
+import PostItem from '../../components/PostItem.astro';
+import { getCollection } from 'astro:content';
+import { readingTime } from '../../utils/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  const tags = new Set(posts.flatMap((post) => post.data.tags));
+  return [...tags].map((tag) => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft && post.data.tags.includes(tag))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title={`标签：${tag}`}>
+  <h1><span data-i18n="tag.prefix">标签</span>：{tag}</h1>
+  <ul>
+    {posts.map((post) => (
+      <PostItem
+        slug={post.slug}
+        title={post.data.title}
+        pubDate={post.data.pubDate}
+        readingTime={readingTime(post.body)}
+        tags={post.data.tags}
+      />
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  h1 {
+    font-size: var(--font-size-title);
+    margin: var(--space-md) 0 var(--space-lg);
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+</style>

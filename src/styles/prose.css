@@ -1,0 +1,155 @@
+/* prose.css — 文章正文排版，目标是长文阅读体验（Medium 思路：单栏、留白、清晰层级） */
+
+.prose {
+  width: 100%;
+  max-width: var(--prose-width);
+  margin: 0 auto;
+}
+
+.prose p {
+  margin: 1.2em 0;
+}
+
+.prose h1 {
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-tight);
+  margin: 2em 0 0.5em;
+}
+
+.prose h2 {
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-tight);
+  margin: 2em 0 0.5em;
+}
+
+.prose h3 {
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-tight);
+  margin: 1.8em 0 0.4em;
+}
+
+.prose a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1.2em 0;
+  padding-left: 1.5em;
+}
+
+.prose li {
+  margin: 0.4em 0;
+}
+
+.prose blockquote {
+  margin: 1.5em 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.prose code {
+  background: var(--color-code-bg);
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+    monospace;
+}
+
+.prose pre {
+  background: var(--color-code-bg);
+  padding: var(--space-md);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  line-height: 1.6;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+  font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+    monospace;
+}
+
+/* 代码块（带工具栏，由 client.ts 生成 .code-block 包裹） */
+.code-block {
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.75rem;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+  background: #e8e7e5;
+}
+
+.code-block-lang {
+  font-size: var(--font-size-small);
+  letter-spacing: 0.02em;
+}
+
+.code-block-toggle {
+  background: none;
+  border: none;
+  padding: 0 0.2rem;
+  font-size: 14px;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.code-block-toggle:hover {
+  opacity: 0.65;
+}
+
+.code-block pre {
+  margin: 0;
+  border-radius: 0;
+}
+
+/* 浅色代码主题（默认）：Shiki 的内联浅色颜色生效，背景用淡灰与正文区分 */
+.code-block .astro-code {
+  background-color: #f1f0ee !important;
+  color: #24292e !important;
+}
+
+/* 深色代码主题：用 Shiki 注入的 --shiki-dark 变量切换 */
+.code-block.code-dark .astro-code {
+  background-color: var(--shiki-dark-bg, #24292e) !important;
+  color: var(--shiki-dark, #e1e4e8) !important;
+}
+
+.code-block.code-dark .astro-code .line > span {
+  color: var(--shiki-dark) !important;
+}
+
+.code-block.code-dark .code-block-header {
+  background: #1f2328;
+  color: #8b949e;
+}
+
+.prose img {
+  border-radius: 6px;
+  margin: 1.5em auto;
+  display: block;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 3em auto;
+  max-width: 200px;
+}

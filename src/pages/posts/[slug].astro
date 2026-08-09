@@ -1,0 +1,40 @@
+---
+// [slug].astro — 单篇文章页（动态路由）
+// URL: /posts/<slug>/，slug 来自文件名（如 hello-world.md → /posts/hello-world/）
+import { getCollection, render } from 'astro:content';
+import PostLayout from '../../layouts/PostLayout.astro';
+import { readingTime } from '../../utils/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.slug },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const allPosts = (await getCollection('posts'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const index = allPosts.findIndex((p) => p.slug === post.slug);
+const prev = index > 0 ? allPosts[index - 1] : undefined;
+const next = index < allPosts.length - 1 ? allPosts[index + 1] : undefined;
+---
+
+<PostLayout
+  title={post.data.title}
+  description={post.data.description}
+  pubDate={post.data.pubDate}
+  tags={post.data.tags}
+  readingTime={readingTime(post.body)}
+  prev={prev && { slug: prev.slug, title: prev.data.title }}
+  next={next && { slug: next.slug, title: next.data.title }}
+>
+  <Content />
+</PostLayout>

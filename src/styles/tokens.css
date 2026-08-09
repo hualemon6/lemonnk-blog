@@ -1,0 +1,45 @@
+/* tokens.css — 设计变量集中在这里，改全站风格只需要改这个文件 */
+
+:root {
+  /* 颜色（浅色，略微偏暖的淡灰） */
+  --color-bg: #f7f7f5;            /* 页面背景：淡灰（首页/列表） */
+  --color-prose-bg: #fbfbfa;      /* 阅读页背景：更亮、更接近白 */
+  --color-text: #262626;          /* 正文：深灰 */
+  --color-text-muted: #737373;    /* 次级文字：中灰 */
+  --color-accent: #1a56db;        /* 强调色 */
+  --color-border: #e0e0dd;        /* 分隔线 */
+  --color-code-bg: #ececea;       /* 代码块背景：比背景深一级 */
+
+  /* 布局宽度 */
+  --header-width: 1000px;         /* 顶部导航宽度（比正文宽，让站名自然靠左） */
+  --page-width: 720px;            /* 页面主体宽度 */
+  --prose-width: 680px;           /* 正文阅读宽度 */
+
+  /* 字号 */
+  --font-size-base: 17px;         /* 正文基础字号 */
+  --font-size-small: 14px;        /* 元信息小字 */
+  --font-size-title: 36px;        /* 文章大标题 */
+  --font-size-h2: 28px;
+  --font-size-h3: 22px;
+
+  /* 行高 */
+  --line-height-base: 1.75;       /* 正文行高 */
+  --line-height-tight: 1.3;       /* 标题行高 */
+
+  /* 间距 */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+}
+
+/* 深色主题：通过 html 上的 data-theme="dark" 覆盖全部颜色 */
+:root[data-theme='dark'] {
+  --color-bg: #1d1d1f;
+  --color-prose-bg: #1d1d1f;
+  --color-text: #e5e5e5;
+  --color-text-muted: #9a9a9a;
+  --color-accent: #6fa8ff;
+  --color-border: #333338;
+  --color-code-bg: #26262a;
+}

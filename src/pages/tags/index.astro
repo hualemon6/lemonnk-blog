@@ -1,0 +1,51 @@
+---
+// index.astro — 所有标签列表
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('posts');
+
+const tagCounts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+const tags = [...tagCounts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+---
+
+<Layout title="标签">
+  <h1 data-i18n="tags.title">标签</h1>
+  <ul class="tag-list">
+    {tags.map(([tag, count]) => (
+      <li>
+        <a href={`/tags/${tag}/`}>{tag}</a>
+        <span class="count">({count})</span>
+      </li>
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  h1 {
+    font-size: var(--font-size-title);
+    margin: var(--space-md) 0 var(--space-lg);
+  }
+
+  .tag-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .tag-list li {
+    font-size: var(--font-size-base);
+  }
+
+  .count {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+</style>

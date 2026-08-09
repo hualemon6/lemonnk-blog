@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+
+# astro build output
+dist/
+
+# astro dev cache
+.astro/
+
+# system
+.DS_Store
+Thumbs.db
+
+# logs
+*.log

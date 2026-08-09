@@ -1,0 +1,55 @@
+---
+// PostMeta.astro — 「日期 · 阅读时长 · 标签」一行，全站复用
+// 想改日期格式或展示方式，只改这里
+import { path } from '../utils/path';
+
+interface Props {
+  pubDate: Date;
+  readingTime: number;
+  tags: string[];
+}
+
+const { pubDate, readingTime, tags } = Astro.props;
+
+const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<p class="post-meta">
+  <time datetime={pubDate.toISOString()}>{dateFormatter.format(pubDate)}</time>
+  <span class="dot">·</span>
+  <span data-i18n="minRead" data-n={readingTime}>约 {readingTime} 分钟</span>
+  {tags.length > 0 && (
+    <>
+      <span class="dot">·</span>
+      <span class="tags">
+        {tags.map((tag) => (
+          <a href={path(`/tags/${tag}/`)} class="tag">{tag}</a>
+        ))}
+      </span>
+    </>
+  )}
+</p>
+
+<style>
+  .post-meta {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+  }
+
+  .tags {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.3em;
+  }
+
+  .tag:hover {
+    color: var(--color-accent);
+  }
+</style>

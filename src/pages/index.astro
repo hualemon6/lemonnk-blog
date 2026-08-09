@@ -1,0 +1,37 @@
+---
+// index.astro — 首页：简短介绍 + 文章内容流（标题 + metadata，无摘要、无标题分组）
+import Layout from '../layouts/Layout.astro';
+import SiteIntro from '../components/SiteIntro.astro';
+import PostItem from '../components/PostItem.astro';
+import { getCollection } from 'astro:content';
+import { readingTime } from '../utils/reading-time';
+
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const latestPosts = posts.slice(0, 5);
+---
+
+<Layout>
+  <SiteIntro />
+
+  <ul>
+    {latestPosts.map((post) => (
+      <PostItem
+        slug={post.slug}
+        title={post.data.title}
+        pubDate={post.data.pubDate}
+        readingTime={readingTime(post.body)}
+        tags={post.data.tags}
+      />
+    ))}
+  </ul>
+</Layout>
+
+<style>
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+</style>

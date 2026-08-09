@@ -1,0 +1,36 @@
+---
+// PostItem.astro — 文章列表项（Lil'Log 式：标题 + metadata，无卡片、无边框、无摘要）
+import PostMeta from './PostMeta.astro';
+import { path } from '../utils/path';
+
+interface Props {
+  slug: string;
+  title: string;
+  pubDate: Date;
+  readingTime: number;
+  tags: string[];
+}
+
+const { slug, title, pubDate, readingTime, tags } = Astro.props;
+---
+
+<li class="post-item">
+  <h2 class="post-title">
+    <a href={path(`/posts/${slug}/`)}>{title}</a>
+  </h2>
+  <PostMeta pubDate={pubDate} readingTime={readingTime} tags={tags} />
+</li>
+
+<style>
+  .post-item {
+    list-style: none;
+    margin-bottom: var(--space-md);
+  }
+
+  .post-title {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: var(--line-height-tight);
+    margin-bottom: var(--space-xs);
+  }
+</style>

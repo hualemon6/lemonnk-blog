@@ -1,0 +1,18 @@
+---
+// about.astro — 「关于我」静态页面
+import Layout from '../layouts/Layout.astro';
+import { site } from '../config/site';
+---
+
+<Layout title="关于">
+  <article class="prose">
+    <h1>关于我</h1>
+    <p>你好，我是 {site.name}，目前就读于南京大学智能科学与技术学院，本科。</p>
+    <p>
+      这个博客用来记录我在人工智能、编程方向的学习笔记和偶尔冒出来的一些想法。
+    </p>
+    <p>
+      关于我更具体的信息，之后会在这里慢慢补充。
+    </p>
+  </article>
+</Layout>
