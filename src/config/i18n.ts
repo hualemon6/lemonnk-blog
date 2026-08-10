@@ -19,6 +19,10 @@ export const ui = {
     'minRead': '约 {n} 分钟',
     'toggle.theme': '切换主题',
     'code.theme': '切换代码主题',
+    'projects.title': '项目',
+    'projects.intro': '一些我做过或参与的项目。研究、课程实验，以及解决实际问题的小工具。',
+    'projects.view': '在 GitHub 上查看',
+    'projects.contributor': '参与项目',
   },
   en: {
     'nav.writing': 'Writing',
@@ -36,6 +40,10 @@ export const ui = {
     'minRead': '{n} min',
     'toggle.theme': 'Toggle theme',
     'code.theme': 'Toggle code theme',
+    'projects.title': 'Projects',
+    'projects.intro': 'Some things I have built or contributed to — research, coursework, and small tools that solve real problems.',
+    'projects.view': 'View on GitHub',
+    'projects.contributor': 'Contributor',
   },
 } as const;
 

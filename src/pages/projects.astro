@@ -1,11 +1,87 @@
 ---
-// projects.astro — 项目展示静态页面
+// projects.astro — 项目索引页（Lil'Log 式：单列、无卡片、文字优先）
 import Layout from '../layouts/Layout.astro';
+import ProjectItem from '../components/ProjectItem.astro';
+import { projects } from '../config/projects';
+import { site } from '../config/site';
+
+const username = site.github.replace(/https?:\/\/github\.com\//, '').replace(/\/.*$/, '');
 ---
 
-<Layout title="Projects">
-  <article class="prose">
-    <h1>Projects</h1>
-    <p>在这里列出你做过的项目，每个项目可以是一小段介绍加链接。</p>
-  </article>
+<Layout title="项目">
+  <header class="projects-header">
+    <h1 data-i18n="projects.title">项目</h1>
+    <p class="projects-intro" data-i18n="projects.intro">
+      一些我做过或参与的项目。研究、课程实验，以及解决实际问题的小工具。
+    </p>
+    <p class="projects-github">
+      <a href={site.github} target="_blank" rel="noopener noreferrer">
+        GitHub · @{username}<span class="arrow"> ↗</span>
+      </a>
+    </p>
+  </header>
+
+  <div class="project-list">
+    {projects.map((project) => <ProjectItem project={project} />)}
+  </div>
 </Layout>
+
+<style>
+  .projects-header {
+    margin: var(--space-md) 0 0;
+  }
+
+  h1 {
+    font-size: var(--font-size-title);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+  }
+
+  .projects-intro {
+    max-width: 560px;
+    margin: 0 0 12px;
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .projects-github {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .projects-github a {
+    color: var(--color-text-muted);
+    transition: color 150ms ease;
+  }
+
+  .projects-github a:hover {
+    color: var(--color-accent);
+  }
+
+  .projects-github .arrow {
+    display: inline-block;
+    transition: transform 150ms ease;
+  }
+
+  .projects-github a:hover .arrow {
+    transform: translate(2px, -1px);
+  }
+
+  .project-list {
+    margin-top: 48px;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 32px;
+    }
+
+    .projects-intro {
+      font-size: 16px;
+    }
+  }
+</style>

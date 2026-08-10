@@ -1,0 +1,149 @@
+---
+// ProjectItem.astro — 单列项目行（无卡片、无阴影），项目之间用 1px 分隔线
+import type { Project } from '../config/projects';
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+---
+
+<article class="project">
+  <header class="project-header">
+    <h2 class="project-title">
+      <a class="project-title-link" href={project.url} target="_blank" rel="noopener noreferrer">
+        {project.name}
+      </a>
+    </h2>
+    <span class="project-meta">
+      {project.ownership === 'collaborative' ? (
+        <span data-i18n="projects.contributor">参与项目</span>
+      ) : (
+        project.year
+      )}
+    </span>
+  </header>
+
+  {project.subtitle && <p class="project-subtitle">{project.subtitle}</p>}
+  <p class="project-description">{project.description}</p>
+
+  <div class="project-tech">{project.tech}</div>
+  {project.metric && <div class="project-metric">{project.metric}</div>}
+
+  <a class="project-link" href={project.url} target="_blank" rel="noopener noreferrer">
+    <span data-i18n="projects.view">在 GitHub 上查看</span><span class="arrow"> ↗</span>
+  </a>
+</article>
+
+<style>
+  .project {
+    padding: 2rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .project:last-child {
+    border-bottom: 0;
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+  }
+
+  .project-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+
+  .project-title-link {
+    color: var(--color-text);
+    transition: color 150ms ease;
+  }
+
+  .project-title-link:hover {
+    color: var(--color-accent);
+  }
+
+  .project-meta {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .project-subtitle {
+    margin: 6px 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--color-text-muted);
+  }
+
+  .project-description {
+    margin: 10px 0 0;
+    max-width: 600px;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .project-tech {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+  }
+
+  .project-metric {
+    margin-top: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text);
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 500;
+  }
+
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text);
+    transition: color 150ms ease;
+  }
+
+  .project-link .arrow {
+    display: inline-block;
+    transition: transform 150ms ease;
+  }
+
+  .project-link:hover {
+    color: var(--color-accent);
+  }
+
+  .project-link:hover .arrow {
+    transform: translate(2px, -1px);
+  }
+
+  @media (max-width: 600px) {
+    .project {
+      padding: 28px 0;
+    }
+
+    .project-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+    }
+
+    .project-title {
+      font-size: 20px;
+    }
+  }
+</style>
