@@ -16,3 +16,5 @@ Thumbs.db
 
 # 本地管理工具（只在本地用，不发布）
 tools/
+studio/
+start-studio.cmd

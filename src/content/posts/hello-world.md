@@ -1,25 +1,15 @@
 ---
-title: 'Hello, World'
+title: 'Hello Blog！！！'
 description: '这是博客的第一篇文章，用来验证文件结构是否正常工作。'
 pubDate: 2026-08-09
 tags: ['Notes', 'Personal']
 ---
 
-## 欢迎
+## Hello
 
-这里是你的第一篇博客文章。它用来验证整条链路：
+这里是我的第一篇博客文章，列一下我接下来半年的更新计划
 
-- 首页能列出文章
-- 文章页能渲染 Markdown
-- 标签页能按标签归类
-
-## 写代码块
-
-```js
-const hello = (name) => `Hello, ${name}!`;
-console.log(hello('World'));
-```
-
-## 数学公式（预留）
-
-后续接入公式渲染后，这里可以写 LaTeX。
+- 数据结构
+- 力扣心得
+- AI项目
+- 待填坑……
