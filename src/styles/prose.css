@@ -147,6 +147,23 @@
   display: block;
 }
 
+/* ---- KaTeX 公式排版（无背景、无边框，纯正文感） ---- */
+
+/* 颜色跟随浅色/深色主题 */
+.prose .katex {
+  color: var(--color-text);
+  font-size: 1.05em;
+}
+
+/* 块级公式：KaTeX 自带居中（.katex-display 默认 display:block; text-align:center） */
+
+/* 超长公式在窄屏（手机）上允许横向滚动，不把页面撑宽 */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.15em 0;
+}
+
 .prose hr {
   border: none;
   border-top: 1px solid var(--color-border);
