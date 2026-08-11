@@ -5,7 +5,7 @@ import { projects } from '../config/projects';
 ---
 
 <Layout title="Projects">
-  <section class="projects-experience" style={`--project-count: ${projects.length}`} data-project-experience>
+  <section class="projects-experience is-interactive" style={`--project-count: ${projects.length}`} data-project-experience>
     <div class="project-stage" data-project-stage>
       <aside class="project-rail" aria-label="Project progress">
         <p class="rail-label">PROJECTS</p>
@@ -16,6 +16,14 @@ import { projects } from '../config/projects';
       </div>
     </div>
   </section>
+  <noscript><style>
+    .projects-experience.is-interactive { margin: clamp(4rem, 12vw, 8rem) 0 var(--space-lg); min-height: 0; }
+    .projects-experience.is-interactive .project-stage { align-items: initial; min-height: 0; }
+    .projects-experience.is-interactive .project-rail { align-self: start; }
+    .projects-experience.is-interactive .project-panels { height: auto; position: static; }
+    .projects-experience.is-interactive .project-panels .project-panel { display: block; opacity: 1; padding: 0 0 var(--space-lg); pointer-events: auto; position: static; visibility: visible; }
+    .projects-experience.is-interactive .project-panels .project-panel + .project-panel { padding-top: var(--space-lg); }
+  </style></noscript>
 </Layout>
 
 <style>
@@ -62,7 +70,6 @@ import { projects } from '../config/projects';
   const current = document.querySelector<HTMLElement>('[data-project-current]');
 
   if (experience && stage && panels.length && current) {
-    experience.classList.add('is-interactive');
     let activeIndex = -1;
     let wheelDistance = 0;
     let touchStartY = 0;
