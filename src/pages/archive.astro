@@ -15,7 +15,7 @@ const posts = (await getCollection('posts'))
   <ul>
     {posts.map((post) => (
       <PostItem
-        slug={post.slug}
+        slug={post.id}
         title={post.data.title}
         pubDate={post.data.pubDate}
         readingTime={readingTime(post.body)}

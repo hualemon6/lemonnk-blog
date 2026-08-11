@@ -9,11 +9,10 @@ import '../styles/prose.css';
 
 interface Props {
   title?: string;
-  description?: string;
   bodyClass?: string;
 }
 
-const { title = site.title, description = site.description, bodyClass } = Astro.props;
+const { title = site.title, bodyClass } = Astro.props;
 ---
 
 <!doctype html>
@@ -21,7 +20,6 @@ const { title = site.title, description = site.description, bodyClass } = Astro.
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href={path('/favicon.svg')} />
     <title>{title}</title>
     <!-- 防闪烁：页面渲染前先恢复主题和语言，避免黑白模式闪一下 -->

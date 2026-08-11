@@ -1,13 +1,14 @@
-// config.ts — 内容集合的「数据结构定义」
-// 声明每篇文章必须有哪些字段、什么类型，写错会直接报错
-
+// content.config.ts — 文章集合的数据结构与文件加载规则
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 const posts = defineCollection({
-  type: 'content',
+  loader: glob({
+    base: './src/content/posts',
+    pattern: '**/*.md',
+  }),
   schema: z.object({
     title: z.string(),                              // 标题（必填）
-    description: z.string().optional(),             // 摘要（可选，用于 SEO）
     pubDate: z.coerce.date(),                       // 发布日期
     tags: z.array(z.string()).default([]),          // 标签，默认空数组
     image: z.string().optional(),                   // 封面图，可选（非必需）

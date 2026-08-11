@@ -18,3 +18,6 @@ Thumbs.db
 tools/
 studio/
 start-studio.cmd
+
+# 本地巡检证据
+dogfood-output/

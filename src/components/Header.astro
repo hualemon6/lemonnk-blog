@@ -34,7 +34,15 @@ const current = pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), ''
     </nav>
 
     <div class="header-actions">
-      <button class="icon-btn" data-action="theme" type="button" title="切换主题" aria-label="切换主题">
+      <button
+        class="icon-btn"
+        data-action="theme"
+        type="button"
+        title="切换主题"
+        aria-label="切换主题"
+        data-i18n-title="toggle.theme"
+        data-i18n-aria="toggle.theme"
+      >
         <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <circle cx="12" cy="12" r="5" />
           <line x1="12" y1="1" x2="12" y2="3" />
@@ -50,7 +58,15 @@ const current = pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), ''
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
       </button>
-      <button class="lang-btn" data-action="lang" type="button">EN</button>
+      <button
+        class="lang-btn"
+        data-action="lang"
+        type="button"
+        title="切换语言"
+        aria-label="切换语言"
+        data-i18n-title="toggle.language"
+        data-i18n-aria="toggle.language"
+      >EN</button>
     </div>
   </div>
 </header>
@@ -154,10 +170,24 @@ const current = pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), ''
       padding: var(--space-sm);
       gap: var(--space-xs);
     }
+  }
+
+  @media (max-width: 640px) {
+    .header-inner {
+      grid-template-columns: 1fr auto;
+    }
 
     .site-nav {
-      gap: var(--space-sm);
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: space-between;
+      gap: var(--space-xs);
+      padding-top: var(--space-xs);
       font-size: 14px;
+    }
+
+    .site-header.scrolled .site-nav {
+      display: none;
     }
   }
 </style>

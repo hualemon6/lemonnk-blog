@@ -1,18 +1,187 @@
 ---
-// about.astro — 「关于我」静态页面
 import Layout from '../layouts/Layout.astro';
-import { site } from '../config/site';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import about from '../data/about.json';
+import { path } from '../utils/path';
+
+const processor = await createMarkdownProcessor();
+const { code: content } = about.content.trim()
+  ? await processor.render(about.content)
+  : { code: '' };
 ---
 
-<Layout title="关于">
-  <article class="prose">
-    <h1>关于我</h1>
-    <p>你好，我是 {site.name}，目前就读于南京大学智能科学与技术学院，本科。</p>
-    <p>
-      这个博客用来记录我在人工智能、编程方向的学习笔记和偶尔冒出来的一些想法。
-    </p>
-    <p>
-      关于我更具体的信息，之后会在这里慢慢补充。
-    </p>
+<Layout title="LemonNK">
+  <article class="about-page">
+    <header class="profile">
+      {about.avatar ? (
+        <img class="avatar-image" src={path(about.avatar)} alt="LemonNK 的头像" />
+      ) : (
+        <div class="avatar-fallback" aria-label="LemonNK 的头像" role="img">
+          <span class="face" aria-hidden="true">
+            <i class="eye eye-left"></i>
+            <i class="eye eye-right"></i>
+            <i class="mouth"></i>
+          </span>
+        </div>
+      )}
+      <div class="profile-copy">
+        <h1>LemonNK</h1>
+        <p class="facts">
+          <span>{about.type}</span>
+          <span>{about.major}</span>
+          <span>爱专 · {about.album}</span>
+        </p>
+      </div>
+    </header>
+
+    {content && <div class="about-content prose" set:html={content} />}
   </article>
 </Layout>
+
+<style>
+  .about-page {
+    max-width: var(--prose-width);
+    margin: var(--space-lg) auto;
+  }
+
+  .profile {
+    align-items: center;
+    display: grid;
+    gap: var(--space-md);
+    grid-template-columns: 152px 1fr;
+  }
+
+  .avatar-image,
+  .avatar-fallback {
+    aspect-ratio: 1;
+    border: 5px solid var(--color-text);
+    border-radius: 50%;
+    display: grid;
+    overflow: visible;
+    place-items: center;
+    position: relative;
+    width: 152px;
+  }
+
+  .avatar-image {
+    background: var(--color-prose-bg);
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .avatar-image::after { display: none; }
+
+  .avatar-fallback {
+    background: var(--color-prose-bg);
+  }
+
+  .avatar-image::after,
+  .avatar-fallback::after {
+    border: 1px solid var(--color-accent);
+    border-left-color: transparent;
+    border-radius: 50%;
+    content: '';
+    inset: -10px;
+    position: absolute;
+    transform: rotate(-24deg);
+  }
+
+  .face {
+    background: var(--color-prose-bg);
+    border: 2px solid var(--color-text);
+    border-radius: 50%;
+    height: 94px;
+    position: relative;
+    width: 94px;
+  }
+
+  .eye {
+    background: var(--color-prose-bg);
+    border: 3px solid var(--color-text);
+    border-radius: 50%;
+    height: 32px;
+    position: absolute;
+    top: 29px;
+    width: 32px;
+  }
+
+  .eye::after {
+    background: var(--color-text);
+    border-radius: 50%;
+    content: '';
+    height: 12px;
+    left: 7px;
+    position: absolute;
+    top: 7px;
+    width: 12px;
+  }
+
+  .eye-left { left: 10px; }
+  .eye-right { right: 10px; }
+
+  .mouth {
+    border-bottom: 2px solid var(--color-text);
+    border-radius: 0 0 20px 20px;
+    bottom: 16px;
+    height: 9px;
+    left: 35px;
+    position: absolute;
+    width: 21px;
+  }
+
+  .profile-copy h1 {
+    font-size: 52px;
+    letter-spacing: -0.055em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .facts {
+    color: var(--color-text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: var(--font-size-small);
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+  }
+
+  .facts span + span::before {
+    color: var(--color-border);
+    content: '·';
+    margin-right: var(--space-sm);
+  }
+
+  .about-content {
+    margin: var(--space-md) 0 0;
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(:root[data-theme='dark']) .about-content {
+    border: 1px solid var(--color-border);
+    padding: var(--space-sm);
+  }
+
+  @media (max-width: 600px) {
+    .about-page { margin-top: var(--space-md); }
+
+    .profile {
+      gap: var(--space-sm);
+      grid-template-columns: 96px 1fr;
+    }
+
+    .avatar-image,
+    .avatar-fallback { border-width: 4px; width: 96px; }
+
+    .face { height: 60px; width: 60px; }
+    .eye { border-width: 2px; height: 21px; top: 18px; width: 21px; }
+    .eye::after { height: 8px; left: 5px; top: 5px; width: 8px; }
+    .eye-left { left: 6px; }
+    .eye-right { right: 6px; }
+    .mouth { bottom: 10px; height: 6px; left: 22px; width: 15px; }
+
+    .profile-copy h1 { font-size: 38px; }
+    .facts { gap: var(--space-xs); margin-top: var(--space-xs); }
+    .facts span + span::before { margin-right: var(--space-xs); }
+  }
+</style>

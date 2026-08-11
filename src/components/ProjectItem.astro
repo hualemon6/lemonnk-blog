@@ -13,7 +13,7 @@ const { project } = Astro.props;
   <header class="project-header">
     <h2 class="project-title">
       <a class="project-title-link" href={project.url} target="_blank" rel="noopener noreferrer">
-        {project.name}
+        {project.name}<span aria-hidden="true"> ↗</span>
       </a>
     </h2>
     <span class="project-meta">
@@ -31,9 +31,6 @@ const { project } = Astro.props;
   <div class="project-tech">{project.tech}</div>
   {project.metric && <div class="project-metric">{project.metric}</div>}
 
-  <a class="project-link" href={project.url} target="_blank" rel="noopener noreferrer">
-    <span data-i18n="projects.view">在 GitHub 上查看</span><span class="arrow"> ↗</span>
-  </a>
 </article>
 
 <style>
@@ -106,29 +103,6 @@ const { project } = Astro.props;
     color: var(--color-text);
     font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
     font-weight: 500;
-  }
-
-  .project-link {
-    display: inline-flex;
-    align-items: center;
-    margin-top: 14px;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-text);
-    transition: color 150ms ease;
-  }
-
-  .project-link .arrow {
-    display: inline-block;
-    transition: transform 150ms ease;
-  }
-
-  .project-link:hover {
-    color: var(--color-accent);
-  }
-
-  .project-link:hover .arrow {
-    transform: translate(2px, -1px);
   }
 
   @media (max-width: 600px) {

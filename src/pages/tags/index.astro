@@ -2,8 +2,9 @@
 // index.astro — 所有标签列表
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import { path } from '../../utils/path';
 
-const posts = await getCollection('posts');
+const posts = (await getCollection('posts')).filter((post) => !post.data.draft);
 
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
@@ -19,7 +20,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
   <ul class="tag-list">
     {tags.map(([tag, count]) => (
       <li>
-        <a href={`/tags/${tag}/`}>{tag}</a>
+        <a href={path(`/tags/${tag}/`)}>{tag}</a>
         <span class="count">({count})</span>
       </li>
     ))}

@@ -4,7 +4,6 @@
 export const site = {
   name: 'LemonNK',
   title: 'LemonNK 的博客',
-  description: '记录关于人工智能、编程、学习，以及偶尔冒出来的一些想法。',
   author: 'LemonNK',
   lang: 'zh-CN',
   locale: 'zh-CN',
