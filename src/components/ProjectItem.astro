@@ -10,7 +10,7 @@ const { project, index } = Astro.props;
 const sequence = String(index + 1).padStart(2, '0');
 ---
 
-<article class="project-panel" data-project-panel data-project-index={index} aria-hidden={index === 0 ? 'false' : 'true'}>
+<article class:list={{ 'project-panel': true, 'is-active': index === 0 }} data-project-panel data-project-index={index} aria-hidden={index === 0 ? 'false' : 'true'}>
   <p class="project-number" aria-hidden="true">{sequence}</p>
   <div class="project-copy">
     <h2>{project.url ? <a href={project.url} target="_blank" rel="noopener noreferrer">{project.name}</a> : project.name}</h2>

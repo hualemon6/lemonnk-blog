@@ -36,11 +36,10 @@ import { projects } from '../config/projects';
   .project-panels :global(.project-narrative) { display: inline; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.18rem, 2.4vw, 1.55rem); line-height: 1.55; margin: 0 0 0 .22em; }
   .projects-experience.is-interactive { margin: 0; min-height: 100svh; }
   .projects-experience.is-interactive .project-stage { align-items: center; min-height: 100svh; }
-  .projects-experience.is-interactive .project-rail { align-self: center; opacity: 0; transition: opacity 180ms ease; }
-  .projects-experience.is-interactive.is-ready .project-rail { opacity: 1; }
+  .projects-experience.is-interactive .project-rail { align-self: center; }
   .projects-experience.is-interactive .project-panels { height: min(64vh, 610px); position: relative; }
   .projects-experience.is-interactive .project-panels :global(.project-panel) { display: block; inset: 0; opacity: 0; padding: 0; pointer-events: none; position: absolute; transition: opacity 160ms ease, visibility 0s linear 160ms; visibility: hidden; }
-  .projects-experience.is-interactive.is-ready .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transition: opacity 240ms 70ms ease, visibility 0s linear 0s; visibility: visible; }
+  .projects-experience.is-interactive .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transition: opacity 160ms ease, visibility 0s linear 0s; visibility: visible; }
   @media (max-width: 600px) {
     .projects-experience { margin-top: var(--space-lg); }
     .project-stage { gap: var(--space-md); grid-template-columns: 1fr; }
@@ -52,7 +51,7 @@ import { projects } from '../config/projects';
     .projects-experience.is-interactive .project-panels { height: min(62vh, 540px); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .projects-experience.is-interactive .project-rail, .projects-experience.is-interactive .project-panels :global(.project-panel) { transition: none; }
+    .projects-experience.is-interactive .project-panels :global(.project-panel) { transition: none; }
   }
 </style>
 
@@ -130,8 +129,5 @@ import { projects } from '../config/projects';
     stage.tabIndex = 0;
     stage.setAttribute('aria-label', 'Project gallery. Use the mouse wheel, swipe, or arrow keys to change projects.');
     setActive(0);
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => experience.classList.add('is-ready'));
-    });
   }
 </script>
