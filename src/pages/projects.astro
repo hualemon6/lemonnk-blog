@@ -34,12 +34,14 @@ import { projects } from '../config/projects';
   .project-panels :global(.project-panel h2 a) { transition: color 180ms ease; }
   .project-panels :global(.project-panel h2 a:hover) { color: var(--color-accent); }
   .project-panels :global(.project-narrative) { display: inline; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.18rem, 2.4vw, 1.55rem); line-height: 1.55; margin: 0 0 0 .22em; }
-  .projects-experience.is-enhanced { height: calc(var(--project-count) * 100svh); margin: 0; }
-  .projects-experience.is-enhanced .project-stage { align-items: center; height: 100svh; position: sticky; top: 0; }
-  .projects-experience.is-enhanced .project-rail { align-self: center; }
-  .projects-experience.is-enhanced .project-panels { height: min(64vh, 610px); position: relative; }
-  .projects-experience.is-enhanced .project-panels :global(.project-panel) { display: block; inset: 0; opacity: 0; padding: 0; pointer-events: none; position: absolute; transform: translateY(20px); transition: opacity 360ms ease, transform 480ms cubic-bezier(.2,.8,.2,1); visibility: hidden; }
-  .projects-experience.is-enhanced .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transform: translateY(0); visibility: visible; }
+  .projects-experience.is-interactive { margin: 0; min-height: 100svh; }
+  .projects-experience.is-interactive .project-stage { align-items: center; animation: stage-arrival 420ms cubic-bezier(.2,.8,.2,1) both; min-height: 100svh; }
+  .projects-experience.is-interactive .project-rail { align-self: center; animation: rail-arrival 340ms 80ms cubic-bezier(.2,.8,.2,1) both; }
+  .projects-experience.is-interactive .project-panels { height: min(64vh, 610px); position: relative; }
+  .projects-experience.is-interactive .project-panels :global(.project-panel) { display: block; inset: 0; opacity: 0; padding: 0; pointer-events: none; position: absolute; transform: translateY(20px); transition: opacity 260ms ease, transform 360ms cubic-bezier(.2,.8,.2,1), visibility 0s linear 360ms; visibility: hidden; }
+  .projects-experience.is-interactive.is-ready .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transform: translateY(0); transition-delay: 0s; visibility: visible; }
+  @keyframes stage-arrival { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rail-arrival { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 600px) {
     .projects-experience { margin-top: var(--space-lg); }
     .project-stage { gap: var(--space-md); grid-template-columns: 1fr; }
@@ -47,12 +49,12 @@ import { projects } from '../config/projects';
     .rail-count { font-size: 1.1rem; }
     .project-panels :global(.project-panel h2) { font-size: clamp(2rem, 11.5vw, 3.5rem); }
     .project-panels :global(.project-narrative) { font-size: 1.06rem; line-height: 1.6; }
-    .projects-experience.is-enhanced .project-stage { align-content: center; height: 100svh; }
-    .projects-experience.is-enhanced .project-panels { height: min(62vh, 540px); }
-    .projects-experience.is-enhanced .project-panels :global(.project-panel) { transform: translateY(14px); }
+    .projects-experience.is-interactive .project-stage { align-content: center; min-height: 100svh; }
+    .projects-experience.is-interactive .project-panels { height: min(62vh, 540px); }
+    .projects-experience.is-interactive .project-panels :global(.project-panel) { transform: translateY(14px); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .projects-experience.is-enhanced .project-panels :global(.project-panel) { transition: none; transform: none; }
+    .projects-experience.is-interactive .project-panels :global(.project-panel) { transition: none; transform: none; }
   }
 </style>
 
@@ -63,9 +65,11 @@ import { projects } from '../config/projects';
   const current = document.querySelector<HTMLElement>('[data-project-current]');
 
   if (experience && stage && panels.length && current) {
-    experience.classList.add('is-enhanced');
+    experience.classList.add('is-interactive');
     let activeIndex = -1;
-    let frame = 0;
+    let wheelDistance = 0;
+    let touchStartY = 0;
+    let lockedUntil = 0;
 
     const setActive = (index: number) => {
       if (index === activeIndex) return;
@@ -78,21 +82,58 @@ import { projects } from '../config/projects';
       current.textContent = String(index + 1).padStart(2, '0');
     };
 
-    const updateActiveProject = () => {
-      frame = 0;
-      const start = experience.getBoundingClientRect().top + window.scrollY;
-      const range = Math.max(1, experience.offsetHeight - window.innerHeight);
-      const progress = Math.min(1, Math.max(0, (window.scrollY - start) / range));
-      setActive(Math.min(panels.length - 1, Math.round(progress * (panels.length - 1))));
+    const moveProject = (direction: number) => {
+      const nextIndex = activeIndex + direction;
+      if (nextIndex < 0 || nextIndex >= panels.length) return false;
+      setActive(nextIndex);
+      lockedUntil = Date.now() + 380;
+      return true;
     };
 
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(updateActiveProject);
-    };
+    const canMove = (direction: number) => direction > 0 ? activeIndex < panels.length - 1 : activeIndex > 0;
 
+    stage.addEventListener('wheel', (event) => {
+      const direction = Math.sign(event.deltaY);
+      if (!direction || !canMove(direction)) return;
+      event.preventDefault();
+      if (Date.now() < lockedUntil) return;
+      wheelDistance += event.deltaY;
+      if (Math.abs(wheelDistance) < 32) return;
+      moveProject(Math.sign(wheelDistance));
+      wheelDistance = 0;
+    }, { passive: false });
+
+    stage.addEventListener('touchstart', (event) => {
+      touchStartY = event.touches[0]?.clientY ?? 0;
+    }, { passive: true });
+
+    stage.addEventListener('touchmove', (event) => {
+      const offset = touchStartY - (event.touches[0]?.clientY ?? touchStartY);
+      const direction = Math.sign(offset);
+      if (direction && canMove(direction)) event.preventDefault();
+    }, { passive: false });
+
+    stage.addEventListener('touchend', (event) => {
+      const endY = event.changedTouches[0]?.clientY ?? touchStartY;
+      const offset = touchStartY - endY;
+      if (Math.abs(offset) >= 32 && Date.now() >= lockedUntil) moveProject(Math.sign(offset));
+      touchStartY = 0;
+    }, { passive: true });
+
+    stage.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown' || event.key === 'PageDown') {
+        if (moveProject(1)) event.preventDefault();
+      }
+      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
+        if (moveProject(-1)) event.preventDefault();
+      }
+    });
+
+    stage.tabIndex = 0;
+    stage.setAttribute('aria-label', 'Project gallery. Use the mouse wheel, swipe, or arrow keys to change projects.');
     setActive(0);
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
-    requestUpdate();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => experience.classList.add('is-ready'));
+    });
   }
 </script>
