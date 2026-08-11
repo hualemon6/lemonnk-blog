@@ -43,11 +43,12 @@ import { projects } from '../config/projects';
   .project-panels :global(.project-panel h2 a:hover) { color: var(--color-accent); }
   .project-panels :global(.project-narrative) { display: inline; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.18rem, 2.4vw, 1.55rem); line-height: 1.55; margin: 0 0 0 .22em; }
   .projects-experience.is-interactive { margin: 0; min-height: 100svh; }
-  .projects-experience.is-interactive .project-stage { align-items: center; min-height: 100svh; }
+  .projects-experience.is-interactive .project-stage { align-items: center; animation: project-stage-arrival 300ms ease-out both; min-height: 100svh; }
   .projects-experience.is-interactive .project-rail { align-self: center; }
   .projects-experience.is-interactive .project-panels { height: min(64vh, 610px); position: relative; }
   .projects-experience.is-interactive .project-panels :global(.project-panel) { display: block; inset: 0; opacity: 0; padding: 0; pointer-events: none; position: absolute; transition: opacity 160ms ease, visibility 0s linear 160ms; visibility: hidden; }
   .projects-experience.is-interactive .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transition: opacity 160ms ease, visibility 0s linear 0s; visibility: visible; }
+  @keyframes project-stage-arrival { from { opacity: 0; } to { opacity: 1; } }
   @media (max-width: 600px) {
     .projects-experience { margin-top: var(--space-lg); }
     .project-stage { gap: var(--space-md); grid-template-columns: 1fr; }
@@ -59,6 +60,7 @@ import { projects } from '../config/projects';
     .projects-experience.is-interactive .project-panels { height: min(62vh, 540px); }
   }
   @media (prefers-reduced-motion: reduce) {
+    .projects-experience.is-interactive .project-stage { animation: none; }
     .projects-experience.is-interactive .project-panels :global(.project-panel) { transition: none; }
   }
 </style>
