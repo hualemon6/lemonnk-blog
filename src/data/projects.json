@@ -1,0 +1,26 @@
+[
+  {
+    "id": "open-vocab-det",
+    "name": "OpenVocabDet",
+    "narrative": "explores a training-free way to improve open-vocabulary detection. Frozen CLIP revisits the proposals produced by Grounding DINO and reranks them against the query, adding a second look without introducing another training stage. On COCO val2017, this small intervention raises AP from 48.61 to 49.64.",
+    "url": "https://github.com/hualemon6/OpenVocabDet"
+  },
+  {
+    "id": "nju-rule-rag",
+    "name": "NJU Rule RAG",
+    "narrative": "is a retrieval-augmented assistant for Nanjing University regulations and academic procedures. It turns 220 institutional documents into 3,441 searchable chunks, then combines BGE-M3 retrieval, Qwen3 generation, and a FastAPI service into answers that are grounded in the source material. Typical responses arrive in 1.76 seconds.",
+    "url": "https://github.com/Mr-tree013/nju-rule-rag"
+  },
+  {
+    "id": "cifar-10-cnn",
+    "name": "CIFAR-10 CNN",
+    "narrative": "is an experiment record rather than a single final model. Starting from a basic convolutional baseline, the project traces the decisions that move accuracy from 63% to beyond 90%: stronger augmentation, more deliberate optimization, and a gradual step toward ResNet-style structure. Everything is implemented and compared in PyTorch.",
+    "url": "https://github.com/hualemon6/CIFAR-10-CNN"
+  },
+  {
+    "id": "online-quiz",
+    "name": "OnlineQuiz",
+    "narrative": "is a small browser workspace for completing Digital System Design coursework. It keeps answers in local storage, keeps the workflow inside the browser, and exports completed responses as a PDF when the work is ready to hand in. The aim is simply to make a repetitive course task feel calmer and more reliable.",
+    "url": "https://github.com/hualemon6/OnlineQuiz"
+  }
+]

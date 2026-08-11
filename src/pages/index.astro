@@ -16,7 +16,7 @@ const latestPosts = posts.slice(0, 5);
 <Layout>
   <SiteIntro />
 
-  <ul>
+  <ul class="home-posts">
     {latestPosts.map((post) => (
       <PostItem
         slug={post.id}
@@ -30,8 +30,14 @@ const latestPosts = posts.slice(0, 5);
 </Layout>
 
 <style>
-  ul {
+  .home-posts {
+    animation: posts-arrival 360ms 330ms cubic-bezier(.2,.8,.2,1) both;
     padding: 0;
     margin: 0;
+  }
+
+  @keyframes posts-arrival {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>

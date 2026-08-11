@@ -5,183 +5,64 @@ import about from '../data/about.json';
 import { path } from '../utils/path';
 
 const processor = await createMarkdownProcessor();
-const { code: content } = about.content.trim()
-  ? await processor.render(about.content)
-  : { code: '' };
+const { code: content } = about.content.trim() ? await processor.render(about.content) : { code: '' };
+const facts = [
+  { label: about.type, href: 'https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator' },
+  { label: about.major, href: 'https://is.nju.edu.cn/' },
+  { label: `爱专 · ${about.album}`, href: 'https://music.apple.com/cn/album/%E6%96%B0%E5%9C%B0%E7%90%83/1788007687?uo=4' },
+];
 ---
 
 <Layout title="LemonNK">
   <article class="about-page">
     <header class="profile">
       {about.avatar ? (
-        <img class="avatar-image" src={path(about.avatar)} alt="LemonNK 的头像" />
+        <img class="avatar-image" src={path(about.avatar)} alt="LemonNK 的头像" width="180" height="180" />
       ) : (
-        <div class="avatar-fallback" aria-label="LemonNK 的头像" role="img">
-          <span class="face" aria-hidden="true">
-            <i class="eye eye-left"></i>
-            <i class="eye eye-right"></i>
-            <i class="mouth"></i>
-          </span>
-        </div>
+        <div class="avatar-fallback" aria-label="LemonNK 的头像" role="img"><span class="face" aria-hidden="true"><i class="eye eye-left"></i><i class="eye eye-right"></i><i class="mouth"></i></span></div>
       )}
       <div class="profile-copy">
         <h1>LemonNK</h1>
-        <p class="facts">
-          <span>{about.type}</span>
-          <span>{about.major}</span>
-          <span>爱专 · {about.album}</span>
-        </p>
+        <nav class="facts" aria-label="Profile links">
+          {facts.map((fact) => <a href={fact.href} target="_blank" rel="noopener noreferrer">{fact.label}</a>)}
+        </nav>
       </div>
     </header>
-
     {content && <div class="about-content prose" set:html={content} />}
   </article>
 </Layout>
 
 <style>
-  .about-page {
-    max-width: var(--prose-width);
-    margin: var(--space-lg) auto;
-  }
-
-  .profile {
-    align-items: center;
-    display: grid;
-    gap: var(--space-md);
-    grid-template-columns: 152px 1fr;
-  }
-
-  .avatar-image,
-  .avatar-fallback {
-    aspect-ratio: 1;
-    border: 5px solid var(--color-text);
-    border-radius: 50%;
-    display: grid;
-    overflow: visible;
-    place-items: center;
-    position: relative;
-    width: 152px;
-  }
-
-  .avatar-image {
-    background: var(--color-prose-bg);
-    object-fit: cover;
-    object-position: center;
-  }
-
-  .avatar-image::after { display: none; }
-
-  .avatar-fallback {
-    background: var(--color-prose-bg);
-  }
-
-  .avatar-image::after,
-  .avatar-fallback::after {
-    border: 1px solid var(--color-accent);
-    border-left-color: transparent;
-    border-radius: 50%;
-    content: '';
-    inset: -10px;
-    position: absolute;
-    transform: rotate(-24deg);
-  }
-
-  .face {
-    background: var(--color-prose-bg);
-    border: 2px solid var(--color-text);
-    border-radius: 50%;
-    height: 94px;
-    position: relative;
-    width: 94px;
-  }
-
-  .eye {
-    background: var(--color-prose-bg);
-    border: 3px solid var(--color-text);
-    border-radius: 50%;
-    height: 32px;
-    position: absolute;
-    top: 29px;
-    width: 32px;
-  }
-
-  .eye::after {
-    background: var(--color-text);
-    border-radius: 50%;
-    content: '';
-    height: 12px;
-    left: 7px;
-    position: absolute;
-    top: 7px;
-    width: 12px;
-  }
-
-  .eye-left { left: 10px; }
-  .eye-right { right: 10px; }
-
-  .mouth {
-    border-bottom: 2px solid var(--color-text);
-    border-radius: 0 0 20px 20px;
-    bottom: 16px;
-    height: 9px;
-    left: 35px;
-    position: absolute;
-    width: 21px;
-  }
-
-  .profile-copy h1 {
-    font-size: 52px;
-    letter-spacing: -0.055em;
-    line-height: 1;
-    margin: 0;
-  }
-
-  .facts {
-    color: var(--color-text-muted);
-    display: flex;
-    flex-wrap: wrap;
-    font-size: var(--font-size-small);
-    gap: var(--space-sm);
-    margin-top: var(--space-sm);
-  }
-
-  .facts span + span::before {
-    color: var(--color-border);
-    content: '·';
-    margin-right: var(--space-sm);
-  }
-
-  .about-content {
-    margin: var(--space-md) 0 0;
-    padding-top: var(--space-sm);
-    border-top: 1px solid var(--color-border);
-  }
-
-  :global(:root[data-theme='dark']) .about-content {
-    border: 1px solid var(--color-border);
-    padding: var(--space-sm);
-  }
-
+  .about-page { margin: clamp(4rem, 12vw, 8rem) auto var(--space-lg); max-width: var(--prose-width); }
+  .profile { align-items: end; display: grid; gap: clamp(1.25rem, 4vw, 3rem); grid-template-columns: 180px minmax(0, 1fr); }
+  .avatar-image, .avatar-fallback { animation: avatar-arrival 580ms cubic-bezier(.2,.8,.2,1) both; aspect-ratio: 1; border: 5px solid var(--color-text); border-radius: 50%; display: grid; overflow: hidden; place-items: center; width: 180px; }
+  .avatar-image { background: var(--color-prose-bg); object-fit: cover; object-position: center; }
+  .avatar-fallback { background: var(--color-prose-bg); }
+  .profile-copy { animation: wordmark-arrival 560ms 110ms cubic-bezier(.2,.8,.2,1) both; padding-bottom: .25rem; }
+  .profile-copy h1 { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 800; letter-spacing: -.075em; line-height: .86; margin: 0; }
+  .facts { display: flex; flex-wrap: wrap; gap: .65em; margin-top: var(--space-md); }
+  .facts a { color: var(--color-text-muted); font-size: var(--font-size-small); text-decoration: none; }
+  .about-content { border-top: 1px solid var(--color-border); margin: clamp(3.5rem, 8vw, 5.5rem) 0 0; padding-top: var(--space-sm); }
+  :global(:root[data-theme='dark']) .about-content { border: 1px solid var(--color-border); padding: var(--space-sm); }
+  .face { background: var(--color-prose-bg); border: 2px solid var(--color-text); border-radius: 50%; height: 110px; position: relative; width: 110px; }
+  .eye { background: var(--color-prose-bg); border: 3px solid var(--color-text); border-radius: 50%; height: 37px; position: absolute; top: 34px; width: 37px; }
+  .eye::after { background: var(--color-text); border-radius: 50%; content: ''; height: 14px; left: 8px; position: absolute; top: 8px; width: 14px; }
+  .eye-left { left: 11px; } .eye-right { right: 11px; }
+  .mouth { border-bottom: 2px solid var(--color-text); border-radius: 0 0 20px 20px; bottom: 18px; height: 9px; left: 41px; position: absolute; width: 24px; }
+  @keyframes avatar-arrival { from { opacity: 0; transform: translateY(14px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes wordmark-arrival { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 600px) {
-    .about-page { margin-top: var(--space-md); }
-
-    .profile {
-      gap: var(--space-sm);
-      grid-template-columns: 96px 1fr;
-    }
-
-    .avatar-image,
-    .avatar-fallback { border-width: 4px; width: 96px; }
-
-    .face { height: 60px; width: 60px; }
-    .eye { border-width: 2px; height: 21px; top: 18px; width: 21px; }
-    .eye::after { height: 8px; left: 5px; top: 5px; width: 8px; }
-    .eye-left { left: 6px; }
-    .eye-right { right: 6px; }
-    .mouth { bottom: 10px; height: 6px; left: 22px; width: 15px; }
-
-    .profile-copy h1 { font-size: 38px; }
-    .facts { gap: var(--space-xs); margin-top: var(--space-xs); }
-    .facts span + span::before { margin-right: var(--space-xs); }
+    .about-page { margin-top: var(--space-lg); }
+    .profile { align-items: center; gap: var(--space-sm); grid-template-columns: 88px minmax(0, 1fr); }
+    .avatar-image, .avatar-fallback { border-width: 4px; height: 88px; width: 88px; }
+    .profile-copy h1 { font-size: clamp(2.25rem, 12vw, 2.55rem); }
+    .facts { gap: .45em; margin-top: var(--space-sm); }
+    .facts a { font-size: 12px; }
+    .about-content { margin-top: var(--space-lg); }
+    .face { height: 54px; width: 54px; }
+    .eye { border-width: 2px; height: 19px; top: 16px; width: 19px; }
+    .eye::after { height: 7px; left: 4px; top: 4px; width: 7px; }
+    .eye-left { left: 6px; } .eye-right { right: 6px; }
+    .mouth { bottom: 9px; height: 6px; left: 20px; width: 14px; }
   }
 </style>

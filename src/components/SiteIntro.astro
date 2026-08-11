@@ -25,16 +25,17 @@ import { path } from '../utils/path';
 
 <style>
   .site-intro { align-items: end; display: grid; gap: clamp(1.25rem, 4vw, 3rem); grid-template-columns: 180px minmax(0, 1fr); margin: clamp(4rem, 12vw, 8.5rem) 0 clamp(3.5rem, 8vw, 5.5rem); }
-  .intro-avatar-wrap { animation: avatar-arrival 580ms cubic-bezier(.2,.8,.2,1) both; border: 5px solid var(--color-text); border-radius: 50%; height: 180px; overflow: hidden; width: 180px; }
+  .intro-avatar-wrap { animation: avatar-arrival 380ms cubic-bezier(.2,.8,.2,1) both; border: 5px solid var(--color-text); border-radius: 50%; height: 180px; overflow: hidden; width: 180px; }
   .intro-avatar { display: block; height: 100%; max-width: none; object-fit: cover; object-position: center; width: 100%; }
-  .intro-copy { animation: wordmark-arrival 560ms 110ms cubic-bezier(.2,.8,.2,1) both; padding-bottom: .25rem; }
-  .intro-title { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 800; letter-spacing: -.075em; line-height: .86; margin: 0; }
-  .intro-links { display: flex; gap: var(--space-sm); margin-top: var(--space-md); }
+  .intro-copy { padding-bottom: .25rem; }
+  .intro-title { animation: wordmark-arrival 360ms 130ms cubic-bezier(.2,.8,.2,1) both; font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 800; letter-spacing: -.075em; line-height: .86; margin: 0; }
+  .intro-links { animation: links-arrival 280ms 230ms cubic-bezier(.2,.8,.2,1) both; display: flex; gap: var(--space-sm); margin-top: var(--space-md); }
   .intro-icon { color: var(--color-text-muted); display: inline-flex; transition: color 150ms ease, transform 150ms ease; }
   .intro-icon:hover { color: var(--color-accent); transform: translateY(-2px); }
   .intro-icon svg { height: 19px; width: 19px; }
   @keyframes avatar-arrival { from { opacity: 0; transform: translateY(14px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
   @keyframes wordmark-arrival { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes links-arrival { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 600px) {
     .site-intro { align-items: center; gap: var(--space-sm); grid-template-columns: 88px minmax(0, 1fr); margin: var(--space-lg) 0 calc(var(--space-lg) + var(--space-sm)); }
     .intro-avatar-wrap { border-width: 4px; height: 88px; width: 88px; }

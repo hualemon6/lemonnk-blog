@@ -20,6 +20,7 @@ export const ui = {
     'toggle.language': '切换语言',
     'code.theme': '切换代码主题',
     'projects.title': '项目',
+    'projects.wordmark': 'PROJECTS',
     'projects.contributor': '参与项目',
   },
   en: {
@@ -39,6 +40,7 @@ export const ui = {
     'toggle.language': 'Toggle language',
     'code.theme': 'Toggle code theme',
     'projects.title': 'Projects',
+    'projects.wordmark': 'PROJECTS',
     'projects.contributor': 'Contributor',
   },
 } as const;
