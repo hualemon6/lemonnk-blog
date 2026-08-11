@@ -1,87 +1,44 @@
 ---
-// SiteIntro.astro — 首页身份区：名称与必要链接，不添加介绍性文案
 import { site } from '../config/site';
 import { path } from '../utils/path';
 ---
 
-<section class="site-intro">
-  <h1 class="intro-title">{site.name}</h1>
-  <p class="intro-links">
-    <a
-      href={site.github}
-      class="intro-icon"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="GitHub"
-      title="GitHub"
-      data-i18n-title="intro.github"
-      data-i18n-aria="intro.github"
-    >
-      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-      </svg>
-    </a>
-    <a
-      href={site.leetcode}
-      class="intro-icon"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="LeetCode"
-      title="LeetCode"
-      data-i18n-title="intro.leetcode"
-      data-i18n-aria="intro.leetcode"
-    >
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" />
-      </svg>
-    </a>
-    <a
-      href={path('/about/')}
-      class="intro-icon"
-      aria-label="关于我"
-      title="关于我"
-      data-i18n-title="intro.about"
-      data-i18n-aria="intro.about"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="8" r="4" />
-        <path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" />
-      </svg>
-    </a>
-  </p>
+<section class="site-intro" aria-label="LemonNK">
+  <div class="intro-avatar-wrap" aria-hidden="true">
+    <img class="intro-avatar" src={path('/images/profile/home-avatar.png')} alt="" width="180" height="180" />
+  </div>
+  <div class="intro-copy">
+    <h1 class="intro-title">{site.name}</h1>
+    <p class="intro-links">
+      <a href={site.github} class="intro-icon" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub" data-i18n-title="intro.github" data-i18n-aria="intro.github">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg>
+      </a>
+      <a href={site.leetcode} class="intro-icon" target="_blank" rel="noopener noreferrer" aria-label="LeetCode" title="LeetCode" data-i18n-title="intro.leetcode" data-i18n-aria="intro.leetcode">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z" /></svg>
+      </a>
+      <a href={path('/about/')} class="intro-icon" aria-label="关于我" title="关于我" data-i18n-title="intro.about" data-i18n-aria="intro.about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" /></svg>
+      </a>
+    </p>
+  </div>
 </section>
 
 <style>
-  .site-intro {
-    margin: var(--space-lg) 0 var(--space-lg);
-  }
-
-  .intro-title {
-    font-size: 34px;
-    font-weight: 700;
-    line-height: var(--line-height-tight);
-    margin-bottom: var(--space-sm);
-  }
-
-  .intro-links {
-    margin-top: var(--space-xs);
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .intro-icon {
-    display: inline-flex;
-    color: var(--color-text-muted);
-    transition: opacity 0.15s ease;
-  }
-
-  .intro-icon:hover {
-    color: var(--color-text);
-    opacity: 0.75;
-  }
-
-  .intro-icon svg {
-    width: 19px;
-    height: 19px;
+  .site-intro { align-items: end; display: grid; gap: clamp(1.25rem, 4vw, 3rem); grid-template-columns: 180px minmax(0, 1fr); margin: clamp(4rem, 12vw, 8.5rem) 0 clamp(3.5rem, 8vw, 5.5rem); }
+  .intro-avatar-wrap { animation: avatar-arrival 580ms cubic-bezier(.2,.8,.2,1) both; border: 5px solid var(--color-text); border-radius: 50%; height: 180px; overflow: hidden; width: 180px; }
+  .intro-avatar { display: block; height: 100%; max-width: none; object-fit: cover; object-position: center; width: 100%; }
+  .intro-copy { animation: wordmark-arrival 560ms 110ms cubic-bezier(.2,.8,.2,1) both; padding-bottom: .25rem; }
+  .intro-title { font-size: clamp(3.5rem, 9vw, 6.5rem); font-weight: 800; letter-spacing: -.075em; line-height: .86; margin: 0; }
+  .intro-links { display: flex; gap: var(--space-sm); margin-top: var(--space-md); }
+  .intro-icon { color: var(--color-text-muted); display: inline-flex; transition: color 150ms ease, transform 150ms ease; }
+  .intro-icon:hover { color: var(--color-accent); transform: translateY(-2px); }
+  .intro-icon svg { height: 19px; width: 19px; }
+  @keyframes avatar-arrival { from { opacity: 0; transform: translateY(14px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes wordmark-arrival { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @media (max-width: 600px) {
+    .site-intro { align-items: center; gap: var(--space-sm); grid-template-columns: 88px minmax(0, 1fr); margin: var(--space-lg) 0 calc(var(--space-lg) + var(--space-sm)); }
+    .intro-avatar-wrap { border-width: 4px; height: 88px; width: 88px; }
+    .intro-title { font-size: clamp(2.25rem, 12vw, 2.55rem); }
+    .intro-links { margin-top: var(--space-sm); }
   }
 </style>

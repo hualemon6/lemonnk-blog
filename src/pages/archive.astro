@@ -1,38 +1,83 @@
 ---
-// archive.astro — 全部文章列表（按时间倒序）
 import Layout from '../layouts/Layout.astro';
-import PostItem from '../components/PostItem.astro';
 import { getCollection } from 'astro:content';
+import { path } from '../utils/path';
 import { readingTime } from '../utils/reading-time';
 
 const posts = (await getCollection('posts'))
   .filter((post) => !post.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const postsByYear = posts.reduce((groups, post) => {
+  const year = post.data.pubDate.getFullYear();
+  groups.set(year, [...(groups.get(year) ?? []), post]);
+  return groups;
+}, new Map<number, typeof posts>());
+
+const years = [...postsByYear.entries()].sort(([firstYear], [secondYear]) => secondYear - firstYear);
+const monthFormatter = new Intl.DateTimeFormat('en-US', { month: 'short' });
 ---
 
 <Layout title="归档">
-  <h1 data-i18n="archive.title">归档</h1>
-  <ul>
-    {posts.map((post) => (
-      <PostItem
-        slug={post.id}
-        title={post.data.title}
-        pubDate={post.data.pubDate}
-        readingTime={readingTime(post.body)}
-        tags={post.data.tags}
-      />
+  <h1 class="visually-hidden" data-i18n="archive.title">归档</h1>
+  <div class="archive">
+    {years.map(([year, yearPosts], yearIndex) => (
+      <section class="archive-year" aria-labelledby={`archive-year-${year}`} style={`--year-index: ${yearIndex}`}>
+        <h2 id={`archive-year-${year}`}>{year}</h2>
+        <ol class="archive-timeline">
+          {yearPosts.map((post, postIndex) => {
+            const date = post.data.pubDate;
+            const month = monthFormatter.format(date).toUpperCase();
+            const minutes = readingTime(post.body);
+            return (
+              <li class="archive-entry" style={`--entry-index: ${postIndex}`}>
+                <time class="archive-date" datetime={date.toISOString()}><span>{month}</span><strong>{String(date.getDate()).padStart(2, '0')}</strong></time>
+                <span class="archive-node" aria-hidden="true"></span>
+                <article class="archive-copy">
+                  <h3><a href={path(`/posts/${post.id}/`)}>{post.data.title}</a></h3>
+                  <p class="archive-meta">
+                    <span data-i18n="minRead" data-n={minutes}>约 {minutes} 分钟</span>
+                    {post.data.tags.map((tag) => <a href={path(`/tags/${tag}/`)}>{tag}</a>)}
+                  </p>
+                </article>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
     ))}
-  </ul>
+  </div>
 </Layout>
 
 <style>
-  h1 {
-    font-size: var(--font-size-title);
-    margin: var(--space-md) 0 var(--space-lg);
-  }
-
-  ul {
-    padding: 0;
-    margin: 0;
+  .visually-hidden { height: 1px; margin: -1px; overflow: hidden; position: absolute; width: 1px; clip: rect(0 0 0 0); white-space: nowrap; }
+  .archive { margin: clamp(4rem, 12vw, 8rem) 0 var(--space-lg); }
+  .archive-year { animation: year-arrival 520ms calc(var(--year-index) * 100ms) cubic-bezier(.2,.8,.2,1) both; }
+  .archive-year + .archive-year { margin-top: clamp(4rem, 10vw, 7rem); }
+  .archive-year h2 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(5.5rem, 18vw, 10.5rem); font-weight: 700; letter-spacing: -.09em; line-height: .72; margin: 0 0 clamp(3rem, 8vw, 5.5rem) -.08em; }
+  .archive-timeline { list-style: none; margin: 0; padding: 0; }
+  .archive-entry { display: grid; grid-template-columns: 70px 21px minmax(0, 1fr); min-height: 112px; position: relative; }
+  .archive-entry::before { border-left: 1px solid var(--color-border); bottom: 0; content: ''; left: 80px; position: absolute; top: 26px; }
+  .archive-entry:last-child::before { bottom: 52px; }
+  .archive-date { color: var(--color-text-muted); font-family: Georgia, 'Times New Roman', serif; letter-spacing: .08em; line-height: 1; padding-top: 1px; text-align: right; }
+  .archive-date span { display: block; font-size: 12px; font-weight: 700; }
+  .archive-date strong { color: var(--color-text); display: block; font-size: 25px; font-weight: 700; letter-spacing: -.08em; margin-top: 5px; }
+  .archive-node { background: var(--color-bg); border: 2px solid var(--color-text); border-radius: 50%; height: 9px; margin: 8px 0 0 15px; position: relative; width: 9px; z-index: 1; }
+  .archive-copy { animation: entry-arrival 480ms calc(80ms + var(--entry-index) * 75ms) cubic-bezier(.2,.8,.2,1) both; padding: 0 0 var(--space-md) var(--space-sm); }
+  .archive-copy h3 { font-size: clamp(1.3rem, 3vw, 1.75rem); font-weight: 650; letter-spacing: -.035em; line-height: 1.16; margin: 0 0 var(--space-xs); }
+  .archive-copy h3 a:hover { color: var(--color-accent); }
+  .archive-meta { color: var(--color-text-muted); display: flex; flex-wrap: wrap; font-size: var(--font-size-small); gap: .45em; }
+  .archive-meta a + a::before { color: var(--color-border); content: '·'; margin-right: .45em; }
+  .archive-meta span + a::before { color: var(--color-border); content: '·'; margin-right: .45em; }
+  @keyframes year-arrival { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes entry-arrival { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+  @media (max-width: 600px) {
+    .archive { margin-top: var(--space-lg); }
+    .archive-year h2 { font-size: clamp(4.8rem, 28vw, 7rem); margin-bottom: var(--space-lg); }
+    .archive-entry { grid-template-columns: 53px 16px minmax(0, 1fr); min-height: 100px; }
+    .archive-entry::before { left: 61px; }
+    .archive-date strong { font-size: 21px; }
+    .archive-node { margin-left: 11px; }
+    .archive-copy { padding-left: var(--space-sm); }
   }
 </style>

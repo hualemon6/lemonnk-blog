@@ -46,7 +46,13 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
   .tags {
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 0.3em;
+    gap: 0.45em;
+  }
+
+  .tag + .tag::before {
+    color: var(--color-border);
+    content: '·';
+    margin-right: 0.45em;
   }
 
   .tag:hover {
