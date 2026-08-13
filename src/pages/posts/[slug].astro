@@ -3,6 +3,9 @@ import { getCollection, render } from 'astro:content';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import { readFile } from 'node:fs/promises';
 import nodePath from 'node:path';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import rehypeExternalLinks from 'rehype-external-links';
 import configuredEditions from '../../data/post-editions.json';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { readingTime } from '../../utils/reading-time';
@@ -21,7 +24,22 @@ let aiContent = '';
 if (authoringMode === 'dual') {
   try {
     const aiBody = await readFile(nodePath.join(process.cwd(), 'src', 'content', 'post-versions', `${post.id}.ai.md`), 'utf8');
-    if (aiBody.trim()) aiContent = (await (await createMarkdownProcessor()).render(aiBody)).code;
+    if (aiBody.trim()) {
+      const markdown = await createMarkdownProcessor({
+        remarkPlugins: [[remarkMath, { singleDollarTextMath: true }]],
+        rehypePlugins: [
+          [rehypeKatex, { throwOnError: false }],
+          [rehypeExternalLinks, { target: '_blank', rel: ['noopener', 'noreferrer'] }],
+        ],
+        shikiConfig: {
+          themes: {
+            light: 'github-light',
+            dark: 'github-dark',
+          },
+        },
+      });
+      aiContent = (await markdown.render(aiBody)).code;
+    }
   } catch {
     // A dual post can be created before its AI edition has content.
   }
