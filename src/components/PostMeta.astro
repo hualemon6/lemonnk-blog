@@ -33,7 +33,7 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
       </span>
     </>
   )}
-  {authoringMode && <span class="edition-mark" title={authoringMode === 'me' ? 'Author-written edition' : 'AI-authored edition'}>{authoringMode.toUpperCase()}</span>}
+  {authoringMode && <span class="edition-byline">{authoringMode === 'me' ? 'BY LEMONNK' : 'AI EDITION'}</span>}
 </p>
 
 <style>
@@ -61,19 +61,15 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
     color: var(--color-accent);
   }
 
-  .edition-mark {
-    align-items: center;
-    border: 1px solid currentColor;
-    border-radius: 999px;
+  .edition-byline {
     color: var(--color-text-muted);
-    display: inline-flex;
-    font-size: 9px;
+    font-family: Georgia, 'Times New Roman', 'Songti SC', 'SimSun', serif;
+    font-size: 10px;
     font-weight: 700;
-    height: 20px;
-    justify-content: center;
-    letter-spacing: .045em;
+    letter-spacing: .09em;
     line-height: 1;
-    margin-left: .35em;
-    padding: 0 5px;
+    margin-left: .45em;
+    padding-top: .18em;
+    white-space: nowrap;
   }
 </style>

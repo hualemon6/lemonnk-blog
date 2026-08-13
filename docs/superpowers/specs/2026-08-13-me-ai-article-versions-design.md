@@ -33,7 +33,10 @@ explicit confirmation.
 
 ## Reader
 
-Single-version posts show a small ME or AI circular marker beside the metadata.
+Single-version posts show a restrained, baseline-aligned editorial byline
+beside the metadata (`BY LEMONNK` for ME and `AI EDITION` for AI) rather than
+a circular product badge. Article titles and in-article headings use the
+site's serif display face for a print-magazine hierarchy.
 Dual posts show an animated ME/AI segmented slider and default to ME. Switching
 changes no URL or metadata and preserves the reader's scroll position. The
 slider moves in roughly 240 ms; content makes a restrained fade-and-lift

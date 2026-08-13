@@ -51,7 +51,7 @@ const hasDualEditions = authoringMode === 'dual';
 
 <style>
   .post-header { margin: var(--space-md) 0 var(--space-lg); }
-  h1 { font-size: var(--font-size-title); line-height: var(--line-height-tight); margin: var(--space-sm) 0; }
+  h1 { font-family: var(--font-family-display); font-size: clamp(2.55rem, 6vw, 4.15rem); font-weight: 700; letter-spacing: -.055em; line-height: .98; margin: var(--space-sm) 0; }
   .edition-switch { border: 1px solid var(--color-border); border-radius: 999px; display: inline-grid; grid-template-columns: repeat(2, 1fr); margin-top: var(--space-sm); overflow: hidden; padding: 2px; position: relative; }
   .edition-switch::before { background: var(--color-text); border-radius: 999px; content: ''; height: calc(100% - 4px); left: 2px; position: absolute; top: 2px; transition: transform 240ms cubic-bezier(.2,.8,.2,1); width: calc(50% - 2px); }
   .edition-switch:has([data-edition='ai'].is-active)::before { transform: translateX(100%); }

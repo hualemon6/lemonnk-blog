@@ -11,19 +11,26 @@
 }
 
 .prose h1 {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-h2);
   line-height: var(--line-height-tight);
   margin: 2em 0 0.5em;
 }
 
 .prose h2 {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-h2);
+  font-weight: 700;
+  letter-spacing: -.035em;
   line-height: var(--line-height-tight);
   margin: 2em 0 0.5em;
 }
 
 .prose h3 {
+  font-family: var(--font-family-display);
   font-size: var(--font-size-h3);
+  font-weight: 700;
+  letter-spacing: -.025em;
   line-height: var(--line-height-tight);
   margin: 1.8em 0 0.4em;
 }
