@@ -17,6 +17,12 @@ Thumbs.db
 # 本地管理工具（只在本地用，不发布）
 tools/
 studio/
+!tools/
+!tools/studio-server.mjs
+!studio/
+!studio/index.html
+!studio/studio.css
+!studio/studio.js
 start-studio.cmd
 
 # 本地巡检证据

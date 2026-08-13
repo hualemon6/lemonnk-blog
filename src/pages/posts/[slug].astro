@@ -1,39 +1,37 @@
 ---
-// [slug].astro — 单篇文章页（动态路由）
-// URL: /posts/<slug>/，slug 来自文件名（如 hello-world.md → /posts/hello-world/）
 import { getCollection, render } from 'astro:content';
+import { createMarkdownProcessor } from '@astrojs/markdown-remark';
+import { readFile } from 'node:fs/promises';
+import nodePath from 'node:path';
+import configuredEditions from '../../data/post-editions.json';
 import PostLayout from '../../layouts/PostLayout.astro';
 import { readingTime } from '../../utils/reading-time';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
-  return posts
-    .filter((post) => !post.data.draft)
-    .map((post) => ({
-      params: { slug: post.id },
-      props: { post },
-    }));
+  return posts.filter((post) => !post.data.draft).map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 
 const { post } = Astro.props;
 const { Content } = await render(post);
-
-const allPosts = (await getCollection('posts'))
-  .filter((p) => !p.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
+const authoringMode = post.data.mode === 'me'
+  ? (configuredEditions[post.id as keyof typeof configuredEditions] ?? 'me')
+  : post.data.mode;
+let aiContent = '';
+if (authoringMode === 'dual') {
+  try {
+    const aiBody = await readFile(nodePath.join(process.cwd(), 'src', 'content', 'post-versions', `${post.id}.ai.md`), 'utf8');
+    if (aiBody.trim()) aiContent = (await (await createMarkdownProcessor()).render(aiBody)).code;
+  } catch {
+    // A dual post can be created before its AI edition has content.
+  }
+}
+const allPosts = (await getCollection('posts')).filter((p) => !p.data.draft).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const index = allPosts.findIndex((p) => p.id === post.id);
 const prev = index > 0 ? allPosts[index - 1] : undefined;
 const next = index < allPosts.length - 1 ? allPosts[index + 1] : undefined;
 ---
 
-<PostLayout
-  title={post.data.title}
-  pubDate={post.data.pubDate}
-  tags={post.data.tags}
-  readingTime={readingTime(post.body)}
-  prev={prev && { slug: prev.id, title: prev.data.title }}
-  next={next && { slug: next.id, title: next.data.title }}
->
+<PostLayout title={post.data.title} pubDate={post.data.pubDate} tags={post.data.tags} readingTime={readingTime(post.body)} authoringMode={authoringMode} aiContent={aiContent} prev={prev && { slug: prev.id, title: prev.data.title }} next={next && { slug: next.id, title: next.data.title }}>
   <Content />
 </PostLayout>

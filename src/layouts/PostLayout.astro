@@ -1,5 +1,4 @@
 ---
-// PostLayout.astro — 文章页专用外壳：标题区 + 正文 + 上一篇/下一篇
 import Layout from './Layout.astro';
 import PostMeta from '../components/PostMeta.astro';
 import { path } from '../utils/path';
@@ -9,54 +8,90 @@ interface Props {
   pubDate: Date;
   tags: string[];
   readingTime: number;
+  authoringMode?: 'me' | 'ai' | 'dual';
+  aiContent?: string;
   prev?: { slug: string; title: string };
   next?: { slug: string; title: string };
 }
 
-const { title, pubDate, tags, readingTime, prev, next } = Astro.props;
+const { title, pubDate, tags, readingTime, authoringMode = 'me', aiContent = '', prev, next } = Astro.props;
+const hasDualEditions = authoringMode === 'dual';
 ---
 
 <Layout title={title} bodyClass="page-prose">
   <article>
     <header class="post-header">
       <h1>{title}</h1>
-      <PostMeta pubDate={pubDate} readingTime={readingTime} tags={tags} />
+      <PostMeta pubDate={pubDate} readingTime={readingTime} tags={tags} authoringMode={hasDualEditions ? undefined : authoringMode} />
+      {hasDualEditions && (
+        <div class="edition-switch" role="tablist" aria-label="Article edition">
+          <button class="edition-choice is-active" type="button" role="tab" aria-selected="true" aria-controls="edition-me" data-edition="me">ME</button>
+          <button class="edition-choice" type="button" role="tab" aria-selected="false" aria-controls="edition-ai" data-edition="ai">AI</button>
+        </div>
+      )}
     </header>
 
-    <div class="prose">
-      <slot />
+    <div class="post-editions">
+      <div id="edition-me" class="prose post-edition" role="tabpanel" data-edition-panel="me">
+        <slot />
+      </div>
+      {hasDualEditions && (
+        <div id="edition-ai" class="prose post-edition" role="tabpanel" data-edition-panel="ai" hidden>
+          {aiContent ? <Fragment set:html={aiContent} /> : <p class="edition-empty">The AI edition is being prepared.</p>}
+        </div>
+      )}
     </div>
 
     <nav class="post-nav">
       {prev && <a href={path(`/posts/${prev.slug}/`)} class="nav-link">← {prev.title}</a>}
-      {next && <a href={path(`/posts/${next.slug}/`)} class="nav-link"> {next.title} →</a>}
+      {next && <a href={path(`/posts/${next.slug}/`)} class="nav-link">{next.title} →</a>}
     </nav>
   </article>
 </Layout>
 
 <style>
-  .post-header {
-    margin: var(--space-md) 0 var(--space-lg);
-  }
-
-  h1 {
-    font-size: var(--font-size-title);
-    line-height: var(--line-height-tight);
-    margin: var(--space-sm) 0 var(--space-sm);
-  }
-
-  .post-nav {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-sm);
-    margin-top: var(--space-lg);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--color-border);
-    font-size: var(--font-size-small);
-  }
-
-  .nav-link {
-    color: var(--color-text-muted);
-    max-width: 45%;
-  }
+  .post-header { margin: var(--space-md) 0 var(--space-lg); }
+  h1 { font-size: var(--font-size-title); line-height: var(--line-height-tight); margin: var(--space-sm) 0; }
+  .edition-switch { border: 1px solid var(--color-border); border-radius: 999px; display: inline-grid; grid-template-columns: repeat(2, 1fr); margin-top: var(--space-sm); overflow: hidden; padding: 2px; position: relative; }
+  .edition-switch::before { background: var(--color-text); border-radius: 999px; content: ''; height: calc(100% - 4px); left: 2px; position: absolute; top: 2px; transition: transform 240ms cubic-bezier(.2,.8,.2,1); width: calc(50% - 2px); }
+  .edition-switch:has([data-edition='ai'].is-active)::before { transform: translateX(100%); }
+  .edition-choice { background: transparent; border: 0; color: var(--color-text-muted); cursor: pointer; font: 700 10px/1 inherit; letter-spacing: .065em; min-width: 52px; padding: 7px 11px; position: relative; transition: color 180ms ease; z-index: 1; }
+  .edition-choice.is-active { color: var(--color-prose-bg); }
+  .edition-choice:focus-visible { outline-offset: -3px; }
+  .post-edition.is-entering { animation: edition-in 220ms cubic-bezier(.2,.8,.2,1) both; }
+  .post-edition.is-leaving { animation: edition-out 110ms ease both; }
+  .edition-empty { color: var(--color-text-muted); font-style: italic; margin-top: var(--space-md); }
+  @keyframes edition-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes edition-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-4px); } }
+  .post-nav { border-top: 1px solid var(--color-border); display: flex; font-size: var(--font-size-small); gap: var(--space-sm); justify-content: space-between; margin-top: var(--space-lg); padding-top: var(--space-md); }
+  .nav-link { color: var(--color-text-muted); max-width: 45%; }
 </style>
+
+{hasDualEditions && (
+  <script>
+    const switcher = document.querySelector<HTMLElement>('.edition-switch');
+    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-edition-panel]'));
+    switcher?.addEventListener('click', (event) => {
+      const nextButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-edition]');
+      if (!nextButton || nextButton.classList.contains('is-active')) return;
+      const current = panels.find((panel) => !panel.hidden);
+      const incoming = panels.find((panel) => panel.dataset.edition === nextButton.dataset.edition);
+      if (!current || !incoming) return;
+      const scrollY = window.scrollY;
+      switcher.querySelectorAll<HTMLButtonElement>('[data-edition]').forEach((button) => {
+        const selected = button === nextButton;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-selected', String(selected));
+      });
+      current.classList.add('is-leaving');
+      window.setTimeout(() => {
+        current.hidden = true;
+        current.classList.remove('is-leaving');
+        incoming.hidden = false;
+        incoming.classList.add('is-entering');
+        window.requestAnimationFrame(() => window.scrollTo({ top: Math.min(scrollY, document.documentElement.scrollHeight - window.innerHeight) }));
+        window.setTimeout(() => incoming.classList.remove('is-entering'), 240);
+      }, 110);
+    });
+  </script>
+)}

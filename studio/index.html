@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LemonNK Studio</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="logo">LemonNK<span class="logo-sub">Studio</span></span>
+        <span class="conn-dot" id="connDot" title="服务连接状态"></span>
+        <button class="btn-icon sidebar-toggle" id="btnToggleSidebar" type="button" title="收起/展开侧栏" aria-label="收起/展开侧栏">◀</button>
+        <nav class="mode-switch" aria-label="编辑模式">
+          <button class="mode-btn active" id="btnPostsMode" type="button">文章</button>
+          <button class="mode-btn" id="btnProjectsMode" type="button">Projects</button>
+          <button class="mode-btn" id="btnAboutMode" type="button">About</button>
+        </nav>
+      </div>
+      <div class="topbar-right"><span class="save-status" id="saveStatus">已就绪</span><button id="btnPreview" class="btn" disabled>预览</button><button id="btnPublish" class="btn btn-primary" disabled>发布</button></div>
+    </header>
+
+    <div class="body">
+      <aside class="sidebar" id="postSidebar"><div class="sidebar-search"><input type="text" id="search" placeholder="搜索文章…" autocomplete="off"></div><button id="btnNew" class="btn-new" type="button">＋ 新建文章</button><div class="list-scroll" id="postList"></div></aside>
+      <aside class="sidebar project-sidebar" id="projectSidebar" hidden><button id="btnNewProject" class="btn-new" type="button">＋ 新建项目</button><div class="list-scroll" id="projectList"></div></aside>
+
+      <main class="editor" id="postEditor">
+        <div class="editor-head"><input type="text" id="titleInput" class="title-input" placeholder="文章标题" autocomplete="off"><div class="editor-editions" id="editorEditions" hidden aria-label="Content edition"><button type="button" class="editor-edition is-active" data-editor-edition="me">ME</button><button type="button" class="editor-edition" data-editor-edition="ai">AI</button></div><button id="btnSettings" class="btn-icon" type="button" title="文章设置" aria-label="文章设置">⚙</button></div>
+        <textarea id="bodyInput" class="body-input" placeholder="在这里写正文…（支持 Markdown、代码块、公式）" spellcheck="false"></textarea>
+        <div class="editor-empty" id="editorEmpty">← 从左侧选择一篇文章，或新建文章</div>
+      </main>
+
+      <main class="project-editor" id="projectEditor" hidden><div class="project-editor-head"><p class="eyebrow">Public work index</p><h1>Projects</h1><p id="projectEditorHint">公开页会将标题与英文叙述作为一整块内容呈现；顺序决定滚动切换的顺序。</p></div><div class="project-fields"><label class="project-field"><span>项目名</span><input id="projectNameInput" type="text" placeholder="OpenVocabDet" autocomplete="off"></label><label class="project-field"><span>项目链接（可选）</span><input id="projectUrlInput" type="url" placeholder="https://github.com/..." autocomplete="off"></label><label class="project-field project-field-wide"><span>英文项目叙述</span><textarea id="projectNarrativeInput" rows="14" placeholder="Write one continuous English project narrative…" spellcheck="true"></textarea></label><div class="project-actions project-field-wide"><button id="btnMoveProjectUp" class="btn" type="button">上移</button><button id="btnMoveProjectDown" class="btn" type="button">下移</button><button id="btnDeleteProject" class="btn-danger project-delete" type="button">删除项目</button></div></div></main>
+
+      <main class="about-editor" id="aboutEditor" hidden><div class="about-editor-head"><p class="eyebrow">Profile</p><h1>About</h1><p>这组内容会直接出现在公开主页；下方正文支持 Markdown。</p></div><div class="about-fields"><label class="about-field"><span>性格</span><input id="aboutTypeInput" type="text" placeholder="INFJ" autocomplete="off"></label><label class="about-field"><span>专业</span><input id="aboutMajorInput" type="text" placeholder="NJU IS" autocomplete="off"></label><label class="about-field"><span>爱专</span><input id="aboutAlbumInput" type="text" placeholder="新地球" autocomplete="off"></label><label class="about-field about-field-wide"><span>头像路径（可选）</span><input id="aboutAvatarInput" type="text" placeholder="/images/profile/avatar.png" autocomplete="off"></label><label class="about-field about-field-wide"><span>扩展内容</span><textarea id="aboutContentInput" rows="14" placeholder="写一点想放在个人主页里的内容…" spellcheck="false"></textarea></label></div></main>
+    </div>
+
+    <footer class="statusbar" id="statusbar"><span id="statWords">0 字</span><span class="sep">·</span><span id="statRead">约 0 分钟</span><span class="spacer"></span><span id="statFile"></span><span class="sep">·</span><span id="statSaved"></span></footer>
+
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="drawer" id="drawer"><div class="drawer-head"><strong>文章设置</strong><button class="btn-icon" id="btnCloseDrawer" type="button" title="关闭" aria-label="关闭">×</button></div><div class="drawer-body"><div class="field"><label for="slugInput">文件名 / slug（网址 /posts/文件名）</label><input type="text" id="slugInput" autocomplete="off"></div><div class="field"><label for="dateInput">发布日期</label><input type="date" id="dateInput"></div><div class="field"><label for="tagsInput">标签（逗号分隔）</label><input type="text" id="tagsInput" placeholder="AI, Notes" autocomplete="off"></div><div class="field version-actions" id="versionActions" hidden><button id="btnAddVersion" class="btn" type="button"></button><button id="btnRemoveVersion" class="btn-danger" type="button" hidden></button></div><div class="field"><label>状态</label><div class="radio-row"><label class="radio"><input type="radio" name="draft" value="false"> 已发布</label><label class="radio"><input type="radio" name="draft" value="true"> 草稿</label></div></div><div class="field"><button id="btnDelete" class="btn-danger" type="button">删除文章</button></div></div></aside>
+
+    <div class="modal-backdrop hidden" id="previewModal"><div class="modal modal-wide"><div class="modal-head"><strong>预览（真实 Astro 渲染）</strong><span class="modal-status" id="previewStatus"></span><button class="btn-icon" id="btnClosePreview" type="button">×</button></div><iframe id="previewFrame" class="preview-frame"></iframe></div></div>
+    <div class="modal-backdrop hidden" id="publishModal"><div class="modal"><div class="modal-head"><strong>发布</strong><button class="btn-icon" id="btnClosePublish" type="button">×</button></div><div class="publish-body"><div class="publish-status" id="publishStatus">准备发布…</div><pre class="publish-log" id="publishLog"></pre></div></div></div>
+    <div class="modal-backdrop hidden" id="newPostModal"><div class="modal new-post-modal" role="dialog" aria-modal="true" aria-labelledby="newPostTitle"><div class="modal-head"><strong id="newPostTitle">NEW ARTICLE</strong><button class="btn-icon" id="btnCloseNewPost" type="button" aria-label="关闭">×</button></div><div class="new-post-body"><div class="new-mode" role="radiogroup" aria-label="Authoring mode"><button type="button" class="new-mode-choice is-active" data-new-mode="me">ME</button><button type="button" class="new-mode-choice" data-new-mode="ai">AI</button><button type="button" class="new-mode-choice" data-new-mode="dual">ME + AI</button></div><p id="newModeHint" class="new-mode-hint">Your original writing.</p><div id="newUploads" class="new-uploads"></div><div class="new-post-actions"><button id="btnCancelNewPost" class="btn" type="button">取消</button><button id="btnCreatePost" class="btn btn-primary" type="button">创建</button></div></div></div></div>
+  </div>
+  <script src="studio.js"></script>
+</body>
+</html>
