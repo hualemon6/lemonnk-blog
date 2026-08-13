@@ -49,17 +49,17 @@ const hasDualEditions = authoringMode === 'dual';
   </article>
 
   {hasDualEditions && (
-    <script>
-      const switcher = document.querySelector<HTMLElement>('.edition-switch');
-      const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-edition-panel]'));
+    <script is:inline>
+      const switcher = document.querySelector('.edition-switch');
+      const panels = Array.from(document.querySelectorAll('[data-edition-panel]'));
       switcher?.addEventListener('click', (event) => {
-        const nextButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-edition]');
+        const nextButton = event.target.closest('[data-edition]');
         if (!nextButton || nextButton.classList.contains('is-active')) return;
         const current = panels.find((panel) => !panel.hidden);
-        const incoming = panels.find((panel) => panel.dataset.edition === nextButton.dataset.edition);
+        const incoming = panels.find((panel) => panel.dataset.editionPanel === nextButton.dataset.edition);
         if (!current || !incoming) return;
         const scrollY = window.scrollY;
-        switcher.querySelectorAll<HTMLButtonElement>('[data-edition]').forEach((button) => {
+        switcher.querySelectorAll('[data-edition]').forEach((button) => {
           const selected = button === nextButton;
           button.classList.toggle('is-active', selected);
           button.setAttribute('aria-selected', String(selected));
