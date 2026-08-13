@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>About 视觉方向</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f7f7f5; color: #202124; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width: 1120px; margin: 0 auto; padding: 52px 28px 80px; }
+    h1 { margin: 0; font-size: 30px; letter-spacing: -.04em; }
+    .intro { margin: 10px 0 34px; color: #666; }
+    .directions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .direction { min-height: 525px; padding: 18px; border: 1px solid #deded9; background: #fbfbfa; cursor: pointer; transition: border-color .15s, transform .15s; }
+    .direction:hover { border-color: #1a56db; transform: translateY(-2px); }
+    .direction.selected { border: 2px solid #1a56db; }
+    .label { color: #1a56db; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+    .name { font-size: 34px; font-weight: 700; letter-spacing: -.05em; line-height: 1; }
+    .copy { color: #666; font-size: 13px; line-height: 1.6; }
+    .avatar { display: grid; place-items: center; width: 100px; height: 100px; border-radius: 50%; color: #fff; font-size: 36px; font-weight: 700; background: #111; border: 5px solid #fbfbfa; box-shadow: 0 0 0 1px #1a56db; }
+    .avatar::after { content: ""; position: absolute; }
+    .rule { height: 1px; background: #ddd; margin: 28px 0 18px; }
+    .facts { display: grid; gap: 14px; }
+    .fact { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; }
+    .fact span:first-child { color: #777; }
+    .fact span:last-child { font-weight: 600; text-align: right; }
+    .a-layout { padding-top: 50px; }
+    .a-head { display: flex; align-items: center; gap: 22px; }
+    .a-head .avatar { flex: 0 0 auto; }
+    .b-layout { display: grid; justify-items: center; align-content: center; min-height: 420px; text-align: center; background: #1c1c1d; color: #f7f7f5; margin: 10px -8px -8px; padding: 32px; }
+    .b-layout .avatar { margin-bottom: 26px; background: #eee; color: #111; box-shadow: 0 0 0 1px #f2d35f; }
+    .b-layout .name { font-size: 48px; }
+    .b-layout .rule { width: 42px; background: #f2d35f; margin: 24px 0; }
+    .b-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px; }
+    .b-tags span { border: 1px solid #555; padding: 5px 9px; font-size: 12px; }
+    .c-layout { padding-top: 50px; }
+    .c-layout .avatar { margin-bottom: 30px; background: #e5e5e1; color: #202124; box-shadow: 0 0 0 1px #aaa; }
+    .c-list { margin-top: 28px; border-top: 1px solid #ddd; }
+    .c-list div { display: grid; grid-template-columns: 70px 1fr; padding: 13px 0; border-bottom: 1px solid #ddd; font-size: 14px; }
+    .c-list span:first-child { color: #777; }
+    @media (max-width: 820px) { .directions { grid-template-columns: 1fr; } .direction { min-height: auto; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>About 的信息层级</h1>
+    <p class="intro">基于公开个人站的常见做法：以头像建立锚点，再用少量事实替代自我说明。点击选择方向。</p>
+    <section class="directions">
+      <article class="direction selected" data-choice="editorial" onclick="toggleSelect(this)">
+        <p class="label">A · 推荐</p>
+        <div class="a-layout">
+          <div class="a-head"><div class="avatar">●</div><div><div class="name">LemonNK</div><p class="copy">personal notes</p></div></div>
+          <div class="rule"></div>
+          <div class="facts"><div class="fact"><span>TYPE</span><span>INFJ</span></div><div class="fact"><span>MAJOR</span><span>NJU IS</span></div><div class="fact"><span>FAV. ALBUM</span><span>新地球</span></div></div>
+        </div>
+        <p class="copy">编辑型：头像与姓名形成主视觉，三条信息像唱片内页。安静、耐看，也仍是博客。</p>
+      </article>
+      <article class="direction" data-choice="poster" onclick="toggleSelect(this)">
+        <p class="label">B · 海报型</p>
+        <div class="b-layout"><div class="avatar">●</div><div class="name">LemonNK</div><div class="rule"></div><div class="b-tags"><span>INFJ</span><span>NJU IS</span><span>新地球</span></div></div>
+        <p class="copy">更强的个人态度，但会让博客从阅读站变得更像作品集首页。</p>
+      </article>
+      <article class="direction" data-choice="index" onclick="toggleSelect(this)">
+        <p class="label">C · 索引型</p>
+        <div class="c-layout"><div class="avatar">●</div><div class="name">LemonNK</div><div class="c-list"><div><span>01</span><span>INFJ</span></div><div><span>02</span><span>NJU IS</span></div><div><span>03</span><span>爱专 · 新地球</span></div></div></div>
+        <p class="copy">最克制，但较像个人资料页；头像和情绪感会被压低。</p>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

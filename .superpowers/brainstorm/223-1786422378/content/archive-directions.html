@@ -1,0 +1,69 @@
+<style>
+  .archive-question { max-width: 1080px; margin: 0 auto; }
+  .archive-question .subtitle { max-width: 660px; }
+  .archive-directions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 30px; }
+  .archive-direction { border: 1px solid #d9d7d1; cursor: pointer; background: #f8f7f4; min-width: 0; transition: transform .18s ease, border-color .18s ease; }
+  .archive-direction:hover { border-color: #242424; transform: translateY(-3px); }
+  .archive-direction[data-choice="chronology"] { border: 2px solid #242424; }
+  .mock-label { display: flex; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #d9d7d1; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+  .mock-label b { color: #1a56db; }
+  .archive-mock { min-height: 390px; padding: 26px 24px 22px; color: #202020; overflow: hidden; }
+  .date-ledger { display: grid; grid-template-columns: 44px 1fr; gap: 14px; }
+  .date-ledger time { font: 700 13px/1 Georgia, serif; letter-spacing: .08em; color: #77736b; padding-top: 4px; }
+  .date-ledger article { border-left: 1px solid #d3d0c8; padding: 0 0 24px 14px; position: relative; }
+  .date-ledger article::before { content: ''; position: absolute; top: 7px; left: -3px; height: 5px; width: 5px; background: #202020; border-radius: 50%; }
+  .date-ledger h4 { font-size: 18px; line-height: 1.18; margin: 0 0 7px; }
+  .date-ledger p, .archive-mock small { margin: 0; color: #77736b; font-size: 12px; }
+  .timeline-year { font: italic 84px/.78 Georgia, 'Times New Roman', serif; letter-spacing: -.08em; color: #202020; margin: 6px 0 44px -6px; }
+  .timeline-entry { display: grid; grid-template-columns: 52px 1fr; column-gap: 14px; position: relative; padding-bottom: 28px; }
+  .timeline-entry::after { content: ''; position: absolute; left: 25px; top: 25px; bottom: -2px; border-left: 1px solid #b8b5ae; }
+  .timeline-entry:last-child::after { display: none; }
+  .timeline-date { font: 700 13px/1.1 Georgia, serif; letter-spacing: .09em; padding-top: 4px; }
+  .timeline-dot { position: absolute; left: 22px; top: 8px; width: 7px; height: 7px; border: 2px solid #202020; border-radius: 50%; background: #f8f7f4; }
+  .timeline-entry h4 { font-size: 19px; line-height: 1.18; margin: 0 0 7px; }
+  .timeline-entry p { margin: 0; font-size: 12px; color: #77736b; }
+  .calendar-month { border-top: 2px solid #202020; padding-top: 10px; margin: 0 0 26px; }
+  .calendar-month strong { display: block; font: 700 42px/.85 Georgia, serif; letter-spacing: -.06em; margin-bottom: 15px; }
+  .calendar-month span { color: #77736b; font: 12px/1.5 ui-monospace, monospace; }
+  .calendar-month h4 { margin: 14px 0 5px; font-size: 18px; line-height: 1.18; }
+  .direction-copy { padding: 16px 18px 20px; border-top: 1px solid #d9d7d1; }
+  .direction-copy h3 { margin: 0 0 7px; font-size: 17px; }
+  .direction-copy p { margin: 0; color: #6f6b65; font-size: 13px; line-height: 1.55; }
+  @media (max-width: 800px) { .archive-directions { grid-template-columns: 1fr; } .archive-mock { min-height: 300px; } }
+</style>
+
+<section class="archive-question">
+  <p class="label">Archive / visual system</p>
+  <h2>时间要成为归档页的主角。</h2>
+  <p class="subtitle">都保留极少的内容；区别只在时间的表达强度。我的推荐是 B：它有明确的时间线，但不像模板化的“项目时间轴”。</p>
+
+  <div class="archive-directions">
+    <article class="archive-direction" data-choice="ledger" onclick="toggleSelect(this)">
+      <div class="mock-label"><span>A · Ledger</span><span>低调</span></div>
+      <div class="archive-mock date-ledger">
+        <time>08·10</time><article><h4>接雨水</h4><p>LeetCode · 1 min</p></article>
+        <time>08·09</time><article><h4>Hello Blog</h4><p>Notes · Personal</p></article>
+      </div>
+      <div class="direction-copy"><h3>日期账本</h3><p>日期稳定、标题靠右。最克制，但戏剧性较弱。</p></div>
+    </article>
+
+    <article class="archive-direction" data-choice="chronology" onclick="toggleSelect(this)">
+      <div class="mock-label"><span>B · Chronology</span><b>推荐</b></div>
+      <div class="archive-mock">
+        <div class="timeline-year">2026</div>
+        <div class="timeline-entry"><time class="timeline-date">AUG<br>10</time><i class="timeline-dot"></i><div><h4>接雨水</h4><p>LeetCode · 1 min</p></div></div>
+        <div class="timeline-entry"><time class="timeline-date">AUG<br>09</time><i class="timeline-dot"></i><div><h4>Hello Blog</h4><p>Notes · Personal</p></div></div>
+      </div>
+      <div class="direction-copy"><h3>编年线</h3><p>大年份制造张力；细刻度和日期把文章收进时间里。</p></div>
+    </article>
+
+    <article class="archive-direction" data-choice="calendar" onclick="toggleSelect(this)">
+      <div class="mock-label"><span>C · Calendar</span><span>排版感</span></div>
+      <div class="archive-mock">
+        <section class="calendar-month"><strong>Aug.</strong><span>2026 / 08 / 10</span><h4>接雨水</h4><small>LeetCode · 1 min</small></section>
+        <section class="calendar-month"><strong>Aug.</strong><span>2026 / 08 / 09</span><h4>Hello Blog</h4><small>Notes · Personal</small></section>
+      </div>
+      <div class="direction-copy"><h3>月度刊物</h3><p>月份是主视觉，更像杂志目录；适合月度文章较多时。</p></div>
+    </article>
+  </div>
+</section>

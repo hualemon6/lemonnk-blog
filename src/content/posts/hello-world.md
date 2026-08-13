@@ -1,6 +1,5 @@
 ---
 title: 'Hello Blog！！！'
-description: '这是博客的第一篇文章，用来验证文件结构是否正常工作。'
 pubDate: 2026-08-09
 tags: ['Notes', 'Personal']
 ---
