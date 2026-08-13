@@ -21,7 +21,7 @@
   --font-size-title: 36px;        /* 文章大标题 */
   --font-size-h2: 28px;
   --font-size-h3: 22px;
-  --font-family-display: Georgia, 'Times New Roman', 'Songti SC', 'STSong', 'SimSun', serif;
+  --font-family-display: 'Noto Serif SC', 'Source Han Serif SC', 'STZhongsong', 'Songti SC', 'STSong', 'SimSun', serif;
 
   /* 行高 */
   --line-height-base: 1.75;       /* 正文行高 */

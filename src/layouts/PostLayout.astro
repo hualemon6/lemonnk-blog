@@ -47,6 +47,35 @@ const hasDualEditions = authoringMode === 'dual';
       {next && <a href={path(`/posts/${next.slug}/`)} class="nav-link">{next.title} →</a>}
     </nav>
   </article>
+
+  {hasDualEditions && (
+    <script>
+      const switcher = document.querySelector<HTMLElement>('.edition-switch');
+      const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-edition-panel]'));
+      switcher?.addEventListener('click', (event) => {
+        const nextButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-edition]');
+        if (!nextButton || nextButton.classList.contains('is-active')) return;
+        const current = panels.find((panel) => !panel.hidden);
+        const incoming = panels.find((panel) => panel.dataset.edition === nextButton.dataset.edition);
+        if (!current || !incoming) return;
+        const scrollY = window.scrollY;
+        switcher.querySelectorAll<HTMLButtonElement>('[data-edition]').forEach((button) => {
+          const selected = button === nextButton;
+          button.classList.toggle('is-active', selected);
+          button.setAttribute('aria-selected', String(selected));
+        });
+        current.classList.add('is-leaving');
+        window.setTimeout(() => {
+          current.hidden = true;
+          current.classList.remove('is-leaving');
+          incoming.hidden = false;
+          incoming.classList.add('is-entering');
+          window.requestAnimationFrame(() => window.scrollTo({ top: Math.min(scrollY, document.documentElement.scrollHeight - window.innerHeight) }));
+          window.setTimeout(() => incoming.classList.remove('is-entering'), 240);
+        }, 110);
+      });
+    </script>
+  )}
 </Layout>
 
 <style>
@@ -66,32 +95,3 @@ const hasDualEditions = authoringMode === 'dual';
   .post-nav { border-top: 1px solid var(--color-border); display: flex; font-size: var(--font-size-small); gap: var(--space-sm); justify-content: space-between; margin-top: var(--space-lg); padding-top: var(--space-md); }
   .nav-link { color: var(--color-text-muted); max-width: 45%; }
 </style>
-
-{hasDualEditions && (
-  <script>
-    const switcher = document.querySelector<HTMLElement>('.edition-switch');
-    const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-edition-panel]'));
-    switcher?.addEventListener('click', (event) => {
-      const nextButton = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-edition]');
-      if (!nextButton || nextButton.classList.contains('is-active')) return;
-      const current = panels.find((panel) => !panel.hidden);
-      const incoming = panels.find((panel) => panel.dataset.edition === nextButton.dataset.edition);
-      if (!current || !incoming) return;
-      const scrollY = window.scrollY;
-      switcher.querySelectorAll<HTMLButtonElement>('[data-edition]').forEach((button) => {
-        const selected = button === nextButton;
-        button.classList.toggle('is-active', selected);
-        button.setAttribute('aria-selected', String(selected));
-      });
-      current.classList.add('is-leaving');
-      window.setTimeout(() => {
-        current.hidden = true;
-        current.classList.remove('is-leaving');
-        incoming.hidden = false;
-        incoming.classList.add('is-entering');
-        window.requestAnimationFrame(() => window.scrollTo({ top: Math.min(scrollY, document.documentElement.scrollHeight - window.innerHeight) }));
-        window.setTimeout(() => incoming.classList.remove('is-entering'), 240);
-      }, 110);
-    });
-  </script>
-)}
