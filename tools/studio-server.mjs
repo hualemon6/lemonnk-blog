@@ -177,6 +177,7 @@ const PROJECT_DEFAULTS = {
   id: '',
   name: 'Untitled project',
   narrative: '',
+  narrativeZh: '',
   url: '',
 };
 
@@ -207,6 +208,7 @@ function cleanProjects(value) {
       id,
       name: (typeof source.name === 'string' ? source.name : PROJECT_DEFAULTS.name).replace(/\0/g, '').trim().slice(0, 120) || PROJECT_DEFAULTS.name,
       narrative: (typeof source.narrative === 'string' ? source.narrative : PROJECT_DEFAULTS.narrative).replace(/\0/g, '').trim().slice(0, 8000),
+      narrativeZh: (typeof source.narrativeZh === 'string' ? source.narrativeZh : PROJECT_DEFAULTS.narrativeZh).replace(/\0/g, '').trim().slice(0, 8000),
       url: cleanProjectUrl(source.url),
     };
   });

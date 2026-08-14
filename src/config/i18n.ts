@@ -22,6 +22,8 @@ export const ui = {
     'projects.title': '项目',
     'projects.wordmark': 'PROJECTS',
     'projects.contributor': '参与项目',
+    'projects.view.experience': '体验',
+    'projects.view.list': '列表',
   },
   en: {
     'nav.writing': 'Writing',
@@ -42,6 +44,8 @@ export const ui = {
     'projects.title': 'Projects',
     'projects.wordmark': 'PROJECTS',
     'projects.contributor': 'Contributor',
+    'projects.view.experience': 'Experience',
+    'projects.view.list': 'List',
   },
 } as const;
 

@@ -174,11 +174,12 @@ async function openProject(index) {
   $('projectNameInput').value = project.name || '';
   $('projectUrlInput').value = project.url || '';
   $('projectNarrativeInput').value = project.narrative || '';
+  $('projectNarrativeZhInput').value = project.narrativeZh || '';
   renderProjectList(); updateStats();
 }
 
 function newProject() {
-  projects.push({ id: '', name: 'Untitled project', narrative: '', url: '' });
+  projects.push({ id: '', name: 'Untitled project', narrative: '', narrativeZh: '', url: '' });
   currentProjectIndex = projects.length - 1;
   $('projectNameInput').value = 'Untitled project';
   $('projectUrlInput').value = '';
@@ -199,6 +200,7 @@ function currentProjectData() {
     id: projects[currentProjectIndex].id || '',
     name: $('projectNameInput').value.trim(),
     narrative: $('projectNarrativeInput').value,
+    narrativeZh: $('projectNarrativeZhInput').value.trim(),
     url: $('projectUrlInput').value.trim(),
   };
 }
@@ -278,9 +280,9 @@ async function deleteProject() {
   currentProjectIndex = projects.length ? Math.min(currentProjectIndex, projects.length - 1) : null;
   if (currentProjectIndex !== null) {
     const project = projects[currentProjectIndex];
-    $('projectNameInput').value = project.name || ''; $('projectUrlInput').value = project.url || ''; $('projectNarrativeInput').value = project.narrative || '';
+    $('projectNameInput').value = project.name || ''; $('projectUrlInput').value = project.url || ''; $('projectNarrativeInput').value = project.narrative || ''; $('projectNarrativeZhInput').value = project.narrativeZh || '';
   } else {
-    $('projectNameInput').value = ''; $('projectUrlInput').value = ''; $('projectNarrativeInput').value = '';
+    $('projectNameInput').value = ''; $('projectUrlInput').value = ''; $('projectNarrativeInput').value = ''; $('projectNarrativeZhInput').value = '';
   }
   saving = true; setSaveStatus('正在保存…', 'saving');
   try { projects = (await api('POST', '/api/projects', { projects })).projects || []; setSaveStatus(`已保存 · ${fmtTime(new Date())}`); renderProjectList(); updateStats(); }
@@ -300,7 +302,7 @@ async function switchMode(nextMode) {
       if (!projects.length) await loadProjects();
       if (projects.length) await openProject(currentProjectIndex === null ? 0 : currentProjectIndex);
       else newProject();
-      $('projectEditorHint').textContent = '公开页会将标题与英文叙述作为一整块内容呈现；顺序决定滚动切换的顺序。';
+      $('projectEditorHint').textContent = '公开页「体验」视图用英文叙述、「列表」视图用中文介绍；顺序决定滚动切换的顺序。';
     } catch (error) {
       $('projectEditorHint').textContent = '项目数据无法载入：请关闭旧 Studio 服务后重新启动 start-studio.cmd。';
       setSaveStatus(`项目加载失败：${error.message}`, 'error');
@@ -319,7 +321,7 @@ $('btnCreatePost').addEventListener('click', () => { closeNewPostModal(); prepar
 $('btnAddVersion').addEventListener('click', addVersion); $('btnRemoveVersion').addEventListener('click', removeVersion);
 ['titleInput', 'bodyInput', 'slugInput', 'tagsInput'].forEach((id) => $(id).addEventListener('input', () => { if (id === 'bodyInput') editionBodies[activeEdition] = $('bodyInput').value; scheduleSave(); if (id === 'bodyInput') { updateStats(); autoGrow(); } })); $('dateInput').addEventListener('change', scheduleSave); document.querySelectorAll('input[name="draft"]').forEach((input) => input.addEventListener('change', scheduleSave));
 ['aboutTypeInput', 'aboutMajorInput', 'aboutAlbumInput', 'aboutAvatarInput', 'aboutContentInput'].forEach((id) => $(id).addEventListener('input', () => { scheduleSave(); if (id === 'aboutContentInput') updateStats(); }));
-['projectNameInput', 'projectUrlInput', 'projectNarrativeInput'].forEach((id) => $(id).addEventListener('input', scheduleSave)); $('btnMoveProjectUp').addEventListener('click', () => moveProject(-1)); $('btnMoveProjectDown').addEventListener('click', () => moveProject(1)); $('btnDeleteProject').addEventListener('click', deleteProject);
+['projectNameInput', 'projectUrlInput', 'projectNarrativeInput', 'projectNarrativeZhInput'].forEach((id) => $(id).addEventListener('input', scheduleSave)); $('btnMoveProjectUp').addEventListener('click', () => moveProject(-1)); $('btnMoveProjectDown').addEventListener('click', () => moveProject(1)); $('btnDeleteProject').addEventListener('click', deleteProject);
 $('btnSettings').addEventListener('click', openDrawer); $('btnCloseDrawer').addEventListener('click', closeDrawer); $('drawerBackdrop').addEventListener('click', closeDrawer); $('btnDelete').addEventListener('click', deletePost); $('btnPreview').addEventListener('click', openPreview); $('btnClosePreview').addEventListener('click', () => $('previewModal').classList.add('hidden')); $('btnPublish').addEventListener('click', publish); $('btnClosePublish').addEventListener('click', () => $('publishModal').classList.add('hidden'));
 document.addEventListener('keydown', (event) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); flushSave(); } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'n' && mode === 'posts') { event.preventDefault(); openNewPostModal(); } else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f' && mode === 'posts') { event.preventDefault(); $('search').focus(); $('search').select(); } else if (event.key === 'Escape') { closeDrawer(); closeNewPostModal(); $('previewModal').classList.add('hidden'); $('publishModal').classList.add('hidden'); } });
 window.addEventListener('beforeunload', (event) => { if (saveTimer) { event.preventDefault(); event.returnValue = ''; } });

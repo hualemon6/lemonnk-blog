@@ -5,6 +5,7 @@ export type Project = {
   id: string;
   name: string;
   narrative: string;
+  narrativeZh?: string;
   url: string;
 };
 

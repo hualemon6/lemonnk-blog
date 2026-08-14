@@ -3,24 +3,28 @@
     "id": "open-vocab-det",
     "name": "OpenVocabDet",
     "narrative": "explores a training-free way to improve open-vocabulary detection. Frozen CLIP revisits the proposals produced by Grounding DINO and reranks them against the query, adding a second look without introducing another training stage. On COCO val2017, this small intervention raises AP from 48.61 to 49.64.",
+    "narrativeZh": "一个免训练的开集目标检测改进方法：用冻结的 CLIP 对 Grounding DINO 产生的候选框做二次重排序，在不引入额外训练阶段的前提下，通过“多看一眼”提升检测精度。在 COCO val2017 上，这一轻量改动将 AP 从 48.61 提升到 49.64。",
     "url": "https://github.com/hualemon6/OpenVocabDet"
   },
   {
     "id": "nju-rule-rag",
     "name": "NJU Rule RAG",
     "narrative": "is a retrieval-augmented assistant for Nanjing University regulations and academic procedures. It turns 220 institutional documents into 3,441 searchable chunks, then combines BGE-M3 retrieval, Qwen3 generation, and a FastAPI service into answers that are grounded in the source material. Typical responses arrive in 1.76 seconds.",
+    "narrativeZh": "面向南京大学规章制度与办事流程的检索增强问答助手。它把 220 份校内文件切分为 3441 个可检索片段，结合 BGE-M3 检索、Qwen3 生成与 FastAPI 服务，给出有据可依的回答，平均响应时间约 1.76 秒。",
     "url": "https://github.com/Mr-tree013/nju-rule-rag"
   },
   {
     "id": "cifar-10-cnn",
     "name": "CIFAR-10 CNN",
     "narrative": "is an experiment record rather than a single final model. Starting from a basic convolutional baseline, the project traces the decisions that move accuracy from 63% to beyond 90%: stronger augmentation, more deliberate optimization, and a gradual step toward ResNet-style structure. Everything is implemented and compared in PyTorch.",
+    "narrativeZh": "一份实验记录，而非某个单一最终模型。从最基础的卷积基线出发，逐步追踪把准确率从 63% 推到 90% 以上的关键决策：更强的数据增强、更精细的优化策略，以及向 ResNet 结构的渐进演进，全程用 PyTorch 实现与对比。",
     "url": "https://github.com/hualemon6/CIFAR-10-CNN"
   },
   {
     "id": "online-quiz",
     "name": "OnlineQuiz",
     "narrative": "is a small browser workspace for completing Digital System Design coursework. It keeps answers in local storage, keeps the workflow inside the browser, and exports completed responses as a PDF when the work is ready to hand in. The aim is simply to make a repetitive course task feel calmer and more reliable.",
+    "narrativeZh": "一个用于完成数字系统设计课程作业的浏览器小工具：答案保存在本地、流程不离开浏览器，完成后可导出 PDF 提交，让重复性的课程任务更省心、更可靠。",
     "url": "https://github.com/hualemon6/OnlineQuiz"
   }
 ]
