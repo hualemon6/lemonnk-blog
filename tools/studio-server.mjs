@@ -52,6 +52,10 @@ function json(res, code, obj) {
   res.end(JSON.stringify(obj));
 }
 
+function safeDecode(value) {
+  try { return decodeURIComponent(value); } catch (error) { return value; }
+}
+
 /* ---------- frontmatter 解析（与前端一致，做轻量提取） ---------- */
 function parseFrontmatter(raw) {
   const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
@@ -357,14 +361,14 @@ const server = createServer(async (req, res) => {
     }
     const pm = p.match(/^\/api\/posts\/([^/]+)$/);
     if (pm && req.method === 'GET') {
-      const slug = pm[1];
+      const slug = safeDecode(pm[1]);
       if (!SLUG_RE.test(slug)) return json(res, 400, { error: '非法文件名' });
       try {
         return json(res, 200, await readPost(slug));
       } catch (e) { return json(res, 404, { error: 'not found' }); }
     }
     if (pm && req.method === 'DELETE') {
-      const slug = pm[1];
+      const slug = safeDecode(pm[1]);
       if (!SLUG_RE.test(slug)) return json(res, 400, { error: '非法文件名' });
       try {
         await deletePost(slug);
