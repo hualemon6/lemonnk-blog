@@ -154,6 +154,60 @@
   display: block;
 }
 
+/* ---- 表格：数据表排版 + 窄屏横向滚动 ---- */
+.prose table {
+  border-collapse: collapse;
+  display: block;
+  font-size: 0.92em;
+  line-height: 1.55;
+  margin: 1.5em 0;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: max-content;
+}
+
+.prose thead th {
+  border-bottom: 2px solid var(--color-border);
+  font-weight: 700;
+}
+
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.5em 0.9em;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.prose tbody tr:last-child th,
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.prose th:first-child,
+.prose td:first-child {
+  padding-left: 0;
+}
+
+.prose th:last-child,
+.prose td:last-child {
+  padding-right: 0;
+}
+
+/* 窄屏：允许表格横向滚动，不撑破页面 */
+@media (max-width: 600px) {
+  .prose table {
+    font-size: 0.88em;
+  }
+
+  .prose th,
+  .prose td {
+    padding: 0.45em 0.7em;
+  }
+}
+
 /* ---- KaTeX 公式排版（无背景、无边框，纯正文感） ---- */
 
 /* 颜色跟随浅色/深色主题 */
