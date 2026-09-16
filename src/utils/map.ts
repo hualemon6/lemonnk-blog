@@ -63,14 +63,13 @@ function initMap() {
       .map((el) => el.dataset.node ?? ''),
   );
   let selectedId = stage.dataset.selected ?? nodes.at(-1)?.id ?? '';
-  let parallax = { x: 0, y: 0 };
   let hintGone = false;
 
   const viewport = () => ({ w: stage.clientWidth, h: stage.clientHeight });
 
   function apply(animate = false) {
     camera!.classList.toggle('is-animating', animate && !reduced.matches);
-    camera!.style.transform = `translate3d(${(state.x + parallax.x).toFixed(2)}px, ${(state.y + parallax.y).toFixed(2)}px, 0) scale(${state.k.toFixed(4)})`;
+    camera!.style.transform = `translate3d(${state.x.toFixed(2)}px, ${state.y.toFixed(2)}px, 0) scale(${state.k.toFixed(4)})`;
     const lod = state.k < FAR ? 'far' : state.k < NEAR ? 'mid' : 'near';
     if (world!.dataset.lod !== lod) world!.dataset.lod = lod;
   }
@@ -325,22 +324,9 @@ function initMap() {
     node.el.addEventListener('pointerleave', () => tip?.classList.remove('is-visible'));
   }
 
-  /* ── 交互：视差 ── */
-  if (!reduced.matches) {
-    stage.addEventListener('pointermove', (event) => {
-      if (pan) return;
-      const { w, h } = viewport();
-      parallax = {
-        x: (event.clientX / w - 0.5) * -16,
-        y: (event.clientY / h - 0.5) * -12,
-      };
-      apply(false);
-    });
-    stage.addEventListener('pointerleave', () => {
-      parallax = { x: 0, y: 0 };
-      apply(true);
-    });
-  }
+  /* ── 视差已移除 ──
+     地图上任何持续变化的元素都会让浏览器每帧重算浮窗的 backdrop-filter，
+     整页会明显发卡。让"活"的感觉由浮窗自身的流光承担，成本低得多。 */
 
   /* ── 交互：键盘 ── */
   stage.addEventListener('keydown', (event) => {

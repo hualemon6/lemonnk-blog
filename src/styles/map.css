@@ -78,12 +78,8 @@
   stroke-width: 3;
   stroke-linecap: round;
   stroke-dasharray: 12 10;
-  animation: trunk-flow 34s linear infinite;
 }
 .map-trunk .junction { fill: var(--map-route); stroke: none; }
-@keyframes trunk-flow {
-  to { stroke-dashoffset: -220; }
-}
 
 /* ── 节点 ── */
 .map-node { cursor: pointer; }
@@ -143,13 +139,9 @@
 }
 .map-node.is-selected .node-glyph { color: #fff; opacity: 0.85; }
 .map-node.is-selected .node-title { fill: var(--color-text); font-weight: 640; }
-.map-node.is-selected .node-halo { opacity: 0.5; animation: node-pulse 2.6s ease-in-out infinite; }
+.map-node.is-selected .node-halo { opacity: 0.5; }
 .map-node.is-selected .node-date { color: var(--node-color); fill: var(--node-color); font-weight: 620; }
 .map-node.is-selected .node-scrim { opacity: 0; }
-@keyframes node-pulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 0.22; transform: scale(1.04); }
-}
 
 .map-node.is-dimmed { opacity: 0.2; }
 .map-node.is-hidden { display: none; }
@@ -203,12 +195,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── 地图提示（首次进入的引导） ── */
+/* ── 地图提示（首次进入的引导）：左下角，避开底部详情窗、窗柜与右下缩放控件 ── */
 .map-hint {
   position: fixed;
-  left: 50%;
-  bottom: 82px;
-  transform: translateX(-50%);
+  left: 22px;
+  bottom: 22px;
   z-index: 20;
   padding: 7px 16px;
   border-radius: var(--radius-pill);
@@ -227,6 +218,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   .map-camera.is-animating { transition: none; }
-  .map-trunk path { animation: none; }
-  .map-node.is-selected .node-halo { animation: none; }
 }

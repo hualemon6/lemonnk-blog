@@ -17,6 +17,7 @@ function initWindows() {
   const panes = Array.from(layer.querySelectorAll<HTMLElement>('[data-window]'));
   const guideX = document.querySelector<HTMLElement>('[data-snap-x]');
   const guideY = document.querySelector<HTMLElement>('[data-snap-y]');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const MARGIN = 22;
   const TOP = 84;
   // 底部留出窗柜与缩放控件的高度，避免默认位互相压住
@@ -266,6 +267,16 @@ function initWindows() {
     const key = win.dataset.window ?? '';
     if (!key) continue;
     apply(win, key);
+
+    // 流光：高光跟着鼠标在玻璃上走。只改自身的 CSS 变量，不触发背景重算。
+    if (!reducedMotion.matches) {
+      win.addEventListener('pointermove', (event) => {
+        const rect = win.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        win.style.setProperty('--sheen-x', `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
+        win.style.setProperty('--sheen-y', `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+      });
+    }
 
     if (win.dataset.editable !== 'true') continue;
 
