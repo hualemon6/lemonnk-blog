@@ -1,0 +1,66 @@
+---
+import Window from '../Window.astro';
+import Icon from '../Icon.astro';
+import { site } from '../../config/site';
+import { path } from '../../utils/path';
+import about from '../../data/about.json';
+import { WINDOW_SPECS } from '../../config/map';
+
+const spec = WINDOW_SPECS.identity;
+---
+<Window id="identity" titleKey="window.identity" title="身份" width={spec.width!} side={spec.side} index={spec.index} scroll="none" labelled="身份">
+  <div class="identity">
+    <a class="identity-portrait" href={path('/about/')} aria-label="关于我" data-i18n-aria="intro.about">
+      <img src={path(about.avatar || '/images/profile/home-avatar.webp')} alt="LemonNK 的头像" width="56" height="56" />
+      <span aria-hidden="true"></span>
+    </a>
+    <div class="identity-copy">
+      <p class="identity-name">LemonNK<span aria-hidden="true">.</span></p>
+      <p class="identity-meta">{about.major}<span> / </span>{about.type}</p>
+    </div>
+  </div>
+  <div class="identity-links">
+    <a href={site.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+      <Icon name="github" size={16} />
+      <span>GitHub</span>
+    </a>
+    <a href={site.leetcode} target="_blank" rel="noopener noreferrer" aria-label="LeetCode">
+      <Icon name="code" size={16} />
+      <span>LeetCode</span>
+    </a>
+    <a href={path('/about/')} aria-label="更多关于我" data-i18n-aria="journey.about">
+      <Icon name="user" size={16} />
+      <span data-i18n="nav.about">关于</span>
+    </a>
+  </div>
+</Window>
+
+<style>
+  .identity { display: flex; align-items: center; gap: 12px; }
+  .identity-portrait { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+  .identity-portrait img {
+    width: 100%; height: 100%; object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--glass-rim-outer);
+  }
+  .identity-portrait > span {
+    position: absolute; right: -2px; bottom: 1px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--color-research);
+    border: 2.5px solid var(--glass-fill-solid);
+  }
+  .identity-name { font-size: 16px; font-weight: 650; letter-spacing: -0.03em; line-height: 1.25; }
+  .identity-name > span { color: var(--color-accent); }
+  .identity-meta { margin-top: 3px; font-size: var(--font-size-caption); color: var(--color-text-muted); }
+  .identity-meta > span { opacity: 0.45; margin: 0 0.35em; }
+  .identity-links { display: grid; gap: 2px; margin-top: 14px; }
+  .identity-links a {
+    display: flex; align-items: center; gap: 10px;
+    height: 32px; padding: 0 10px;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-ui);
+    transition: color 150ms ease, background 150ms ease;
+  }
+  .identity-links a:hover { color: var(--color-accent); background: var(--color-accent-soft); }
+</style>

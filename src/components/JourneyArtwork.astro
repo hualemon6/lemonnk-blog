@@ -1,0 +1,36 @@
+---
+import type { JourneyVisual } from '../config/journey';
+interface Props { kind: JourneyVisual; }
+const { kind } = Astro.props;
+---
+<div class:list={['journey-art', `art-${kind}`]} aria-hidden="true">
+  {kind === 'network' ? (
+    <svg viewBox="0 0 240 100" fill="none">
+      <g stroke="currentColor" stroke-width=".8" opacity=".4">
+        <path d="M32 30 90 18 150 38 208 20M32 30 90 76 150 38 208 78M32 70 90 18 150 75 208 20M32 70 90 76 150 75 208 78M90 18v58M150 38v37" />
+      </g>
+      {[ [32,30], [32,70], [90,18], [90,76], [150,38], [150,75], [208,20], [208,78] ].map(([x,y], i) => <g><circle cx={x} cy={y} r="10" fill="var(--color-panel)" stroke="currentColor" stroke-opacity=".3" /><circle cx={x} cy={y} r={i === 4 ? 4 : 2.5} fill="currentColor" /></g>)}
+    </svg>
+  ) : kind === 'journal' ? (
+    <svg viewBox="0 0 240 100" fill="none">
+      <rect x="65" y="12" width="112" height="80" rx="5" fill="currentColor" opacity=".08" transform="rotate(-8 120 50)" />
+      <rect x="66" y="6" width="112" height="80" rx="5" fill="var(--color-panel)" stroke="currentColor" stroke-opacity=".25" transform="rotate(5 120 50)" />
+      <g stroke="currentColor" stroke-linecap="round"><path d="m89 29 60 5m-61 10 45 4m-46 11 54 4" opacity=".35" /><path d="m161 61 2 5 6 1-5 4v6l-5-3-5 3 1-6-5-4 6-1Z" /></g>
+    </svg>
+  ) : kind === 'code' ? (
+    <svg viewBox="0 0 240 100" fill="none">
+      <rect x="43" y="8" width="154" height="84" rx="7" fill="var(--color-panel)" stroke="currentColor" stroke-opacity=".2" />
+      <path d="M43 27h154" stroke="currentColor" opacity=".15" />
+      <g fill="currentColor" opacity=".5"><circle cx="55" cy="18" r="2"/><circle cx="63" cy="18" r="2"/><circle cx="71" cy="18" r="2"/></g>
+      <path d="m91 43-14 13 14 13m58-26 14 13-14 13m-22-30-10 35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  ) : kind === 'signal' ? (
+    <svg viewBox="0 0 240 100" fill="none">
+      {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map((i) => <rect x={27+i*8} y={50-(12+Math.sin(i*.6)**2*27)} width="3" height={24+Math.sin(i*.6)**2*54} rx="1.5" fill="currentColor" opacity={.25+(i%5)*.13} />)}
+    </svg>
+  ) : (
+    <svg viewBox="0 0 240 100" fill="none">
+      {[0,1,2].map((row) => [0,1,2,3,4,5,6,7].map((col) => <rect x={40+col*21} y={17+row*23} width="16" height="17" rx="3" fill="currentColor" opacity={.12+((row+col)%4)*.15} stroke="currentColor" stroke-opacity=".2" />))}
+    </svg>
+  )}
+</div>

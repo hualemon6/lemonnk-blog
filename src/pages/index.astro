@@ -1,43 +1,33 @@
 ---
-// index.astro — 首页：简短介绍 + 文章内容流（标题 + metadata，无摘要、无标题分组）
 import Layout from '../layouts/Layout.astro';
-import SiteIntro from '../components/SiteIntro.astro';
-import PostItem from '../components/PostItem.astro';
-import { getCollection } from 'astro:content';
-import { readingTime } from '../utils/reading-time';
+import MapShell from '../components/MapShell.astro';
+import IdentityWindow from '../components/windows/IdentityWindow.astro';
+import LegendWindow from '../components/windows/LegendWindow.astro';
+import StatsWindow from '../components/windows/StatsWindow.astro';
+import DetailWindow from '../components/windows/DetailWindow.astro';
+import RecentWindow from '../components/windows/RecentWindow.astro';
+import { loadMap, DOCK_WINDOWS } from '../config/model';
 
-const posts = (await getCollection('posts'))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-const latestPosts = posts.slice(0, 5);
+const { model, latest, minutes, years, defaultFloor, floors } = await loadMap();
+const latestNode = model.nodes.find((node) => node.id === `post-${latest?.id}`) ?? model.nodes.at(-1);
+const windows = DOCK_WINDOWS.filter((item) => ['identity', 'legend', 'stats', 'recent', 'detail'].includes(item.id));
 ---
 
-<Layout>
-  <SiteIntro />
-
-  <ul class="home-posts">
-    {latestPosts.map((post) => (
-      <PostItem
-        slug={post.id}
-        title={post.data.title}
-        pubDate={post.data.pubDate}
-        readingTime={readingTime(post.body)}
-        tags={post.data.tags}
+<Layout title="沿途，皆是我 · LemonNK" floors={floors} activeFloor={defaultFloor}>
+  <h1 class="visually-hidden" data-i18n="journey.title">沿途，皆是我</h1>
+  <MapShell model={model} floor={defaultFloor} mode="floor" selectedId={latestNode?.id} windows={windows}>
+    <IdentityWindow />
+    <LegendWindow model={model} />
+    <StatsWindow count={model.nodes.length} years={years} minutes={minutes} />
+    <DetailWindow nodes={model.nodes} selectedId={latestNode?.id} />
+    {latest && (
+      <RecentWindow
+        title={latest.data.title}
+        slug={latest.id}
+        date={latest.data.pubDate}
+        body={latest.body}
+        tags={latest.data.tags}
       />
-    ))}
-  </ul>
+    )}
+  </MapShell>
 </Layout>
-
-<style>
-  .home-posts {
-    animation: posts-arrival 360ms 330ms cubic-bezier(.2,.8,.2,1) both;
-    padding: 0;
-    margin: 0;
-  }
-
-  @keyframes posts-arrival {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>

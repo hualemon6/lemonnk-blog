@@ -1,202 +1,46 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ProjectItem from '../components/ProjectItem.astro';
+import MapShell from '../components/MapShell.astro';
+import IdentityWindow from '../components/windows/IdentityWindow.astro';
+import ListWindow from '../components/windows/ListWindow.astro';
+import DetailWindow from '../components/windows/DetailWindow.astro';
+import { loadMap, DOCK_WINDOWS } from '../config/model';
+import { COLLECTION_FLOOR } from '../config/map';
 import { projects } from '../config/projects';
+
+const { model, floors } = await loadMap();
+const windows = DOCK_WINDOWS.filter((item) => ['identity', 'list', 'detail'].includes(item.id));
+const selected = model.nodes.find((node) => node.category === 'project');
+const collectionPost = projects.at(0)?.id ? `project-${projects.at(0)!.id}` : undefined;
 ---
 
-<Layout title="Projects">
-  <h1 class="visually-hidden" data-i18n="projects.title">项目</h1>
-
-  <div class="projects-switch" role="tablist" aria-label="项目视图切换">
-    <button id="projects-tab-experience" type="button" role="tab" aria-selected="true" aria-controls="projects-experience" data-view="experience" class="is-active" data-i18n="projects.view.experience">体验</button>
-    <button id="projects-tab-list" type="button" role="tab" aria-selected="false" aria-controls="projects-list" data-view="list" data-i18n="projects.view.list">列表</button>
-  </div>
-
-  <section id="projects-experience" class="projects-experience is-interactive" role="tabpanel" aria-labelledby="projects-tab-experience" style={`--project-count: ${projects.length}`} data-project-experience>
-    <div class="project-stage" data-project-stage>
-      <aside class="project-rail" aria-label="Project progress">
-        <p class="rail-label">PROJECTS</p>
-        <p class="rail-count"><span data-project-current>01</span><span aria-hidden="true"> / </span><span>{String(projects.length).padStart(2, '0')}</span></p>
-      </aside>
-      <div class="project-panels">
-      {projects.map((project, index) => <ProjectItem project={project} index={index} />)}
-      </div>
-    </div>
-  </section>
-
-  <section id="projects-list" class="projects-list" role="tabpanel" aria-labelledby="projects-tab-list" hidden>
-    <ol class="project-list">
-      {projects.map((project) => (
-        <li class="project-row">
-          <h2>{project.url ? <a href={project.url} target="_blank" rel="noopener noreferrer">{project.name}</a> : project.name}</h2>
-          <p class="project-desc">{project.narrativeZh || project.narrative}</p>
-        </li>
-      ))}
-    </ol>
-  </section>
-
-  <noscript><style>
-    .projects-experience.is-interactive { display: none; }
-    .projects-list { display: block; }
-  </style></noscript>
+<Layout title="项目 · LemonNK" floors={floors} activeFloor={COLLECTION_FLOOR}>
+  <MapShell model={model} floor={COLLECTION_FLOOR} mode="floor" selectedId={collectionPost ?? selected?.id} windows={windows}>
+    <IdentityWindow />
+    <DetailWindow nodes={model.nodes} selectedId={collectionPost ?? selected?.id} />
+    <ListWindow titleKey="list.projects" title="项目" labelled="项目列表">
+      <h1 class="visually-hidden" data-i18n="projects.title">项目</h1>
+      <ol class="project-list">
+        {projects.map((project, index) => (
+          <li class="project">
+            <p class="project-index">{String(index + 1).padStart(2, '0')}</p>
+            <h2 class="project-name">
+              {project.url
+                ? <a href={project.url} target="_blank" rel="noopener noreferrer">{project.name}</a>
+                : project.name}
+            </h2>
+            <p class="project-narrative">{project.narrativeZh || project.narrative}</p>
+          </li>
+        ))}
+      </ol>
+    </ListWindow>
+  </MapShell>
 </Layout>
 
 <style>
-  .visually-hidden { height: 1px; margin: -1px; overflow: hidden; position: absolute; width: 1px; clip: rect(0 0 0 0); white-space: nowrap; }
-
-  /* 视图切换：胶囊分段，复用 ME/AI 版块切换的滑动胶囊语言 */
-  .projects-switch { border: 1px solid var(--color-border); border-radius: 999px; display: inline-grid; grid-template-columns: repeat(2, 1fr); margin: clamp(1.5rem, 3vw, 2rem) 0 var(--space-md); overflow: hidden; padding: 2px; position: relative; }
-  .projects-switch::before { background: var(--color-text); border-radius: 999px; content: ''; height: calc(100% - 4px); left: 2px; position: absolute; top: 2px; transition: transform 240ms cubic-bezier(.2,.8,.2,1); width: calc(50% - 2px); }
-  .projects-switch:has([data-view='list'].is-active)::before { transform: translateX(100%); }
-  .projects-switch button { background: transparent; border: 0; color: var(--color-text-muted); cursor: pointer; font: 700 12px/1 inherit; letter-spacing: .04em; min-width: 72px; padding: 8px 18px; position: relative; transition: color 180ms ease; z-index: 1; }
-  .projects-switch button.is-active { color: var(--color-bg); }
-  .projects-switch button:focus-visible { outline-offset: -3px; }
-
-  /* 列表视图：单列文字列表，无卡片 */
-  .projects-list { margin: 0 0 var(--space-lg); }
-  .project-list { list-style: none; margin: 0; padding: 0; }
-  .project-row { border-top: 1px solid var(--color-border); padding: var(--space-md) 0; }
-  .project-row:last-child { border-bottom: 1px solid var(--color-border); }
-  .project-row h2 { font-size: clamp(1.35rem, 3vw, 1.6rem); font-weight: 650; letter-spacing: -.02em; line-height: var(--line-height-tight); margin: 0 0 var(--space-xs); }
-  .project-row h2 a { transition: color 180ms ease; }
-  .project-row h2 a:hover { color: var(--color-accent); }
-  .project-desc { color: var(--color-text); font-size: var(--font-size-base); line-height: var(--line-height-base); margin: 0; max-width: 62ch; }
-
-  /* 体验视图（原逻辑保留，仅因顶部切换条把全屏高度收一档） */
-  .projects-experience { margin: clamp(4rem, 12vw, 8rem) 0 var(--space-lg); }
-  .project-stage { display: grid; gap: var(--space-lg); grid-template-columns: 112px minmax(0, 1fr); }
-  .project-rail { align-self: start; border-top: 1px solid var(--color-border); display: grid; gap: var(--space-xs); padding-top: var(--space-sm); }
-  .rail-label, .rail-count { font-family: Georgia, 'Times New Roman', serif; letter-spacing: .1em; margin: 0; }
-  .rail-label { color: var(--color-text-muted); font-size: 12px; }
-  .rail-count { font-size: clamp(1.35rem, 2.5vw, 1.8rem); white-space: nowrap; }
-  .project-panels { min-width: 0; }
-  .project-panels :global(.project-panel) { border-top: 1px solid var(--color-border); padding: 0 0 var(--space-lg); }
-  .project-panels :global(.project-panel + .project-panel) { padding-top: var(--space-lg); }
-  .project-panels :global(.project-number) { color: var(--color-text-muted); font-family: Georgia, 'Times New Roman', serif; font-size: 13px; letter-spacing: .1em; margin: 0 0 var(--space-sm); }
-  .project-panels :global(.project-copy) { max-width: 620px; }
-  .project-panels :global(.project-panel h2) { display: inline; font-size: clamp(3rem, 6.2vw, 5.2rem); font-weight: 800; letter-spacing: -.085em; line-height: .94; margin: 0; overflow-wrap: normal; white-space: nowrap; }
-  .project-panels :global(.project-panel h2 a) { transition: color 180ms ease; }
-  .project-panels :global(.project-panel h2 a:hover) { color: var(--color-accent); }
-  .project-panels :global(.project-narrative) { display: inline; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(1.18rem, 2.4vw, 1.55rem); line-height: 1.55; margin: 0 0 0 .22em; }
-  .projects-experience.is-interactive { margin: 0; min-height: calc(100svh - 5.5rem); }
-  .projects-experience.is-interactive .project-stage { align-items: center; animation: project-stage-arrival 300ms ease-out both; min-height: calc(100svh - 5.5rem); }
-  .projects-experience.is-interactive .project-rail { align-self: center; }
-  .projects-experience.is-interactive .project-panels { height: min(64vh, 610px); position: relative; }
-  .projects-experience.is-interactive .project-panels :global(.project-panel) { display: block; inset: 0; opacity: 0; padding: 0; pointer-events: none; position: absolute; transition: opacity 160ms ease, visibility 0s linear 160ms; visibility: hidden; }
-  .projects-experience.is-interactive .project-panels :global(.project-panel.is-active) { opacity: 1; pointer-events: auto; transition: opacity 160ms ease, visibility 0s linear 0s; visibility: visible; }
-  @keyframes project-stage-arrival { from { opacity: 0; } to { opacity: 1; } }
-  @media (max-width: 600px) {
-    .projects-switch { margin-top: var(--space-sm); }
-    .project-row { padding: var(--space-sm) 0; }
-    .projects-experience { margin-top: var(--space-lg); }
-    .project-stage { gap: var(--space-md); grid-template-columns: 1fr; }
-    .project-rail { display: flex; gap: var(--space-sm); justify-content: space-between; padding-top: var(--space-xs); }
-    .rail-count { font-size: 1.1rem; }
-    .project-panels :global(.project-panel h2) { font-size: clamp(2rem, 11.5vw, 3.5rem); }
-    .project-panels :global(.project-narrative) { font-size: 1.06rem; line-height: 1.6; }
-    .projects-experience.is-interactive .project-stage { align-content: center; min-height: calc(100svh - 5.5rem); }
-    .projects-experience.is-interactive .project-panels { height: min(62vh, 540px); }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .projects-experience.is-interactive .project-stage { animation: none; }
-    .projects-experience.is-interactive .project-panels :global(.project-panel) { transition: none; }
-  }
+  .project-list { display: grid; gap: 14px; }
+  .project { padding: 12px 12px 14px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-project) 6%, transparent); }
+  .project-index { font-size: var(--font-size-micro); letter-spacing: 0.12em; color: var(--color-project); font-weight: 620; }
+  .project-name { margin-top: 4px; font-size: 16px; font-weight: 640; letter-spacing: -0.025em; }
+  .project-narrative { margin-top: 6px; font-size: var(--font-size-caption); line-height: 1.75; color: var(--color-text-muted); }
 </style>
-
-<script>
-  const experience = document.querySelector<HTMLElement>('[data-project-experience]');
-  const stage = document.querySelector<HTMLElement>('[data-project-stage]');
-  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-project-panel]'));
-  const current = document.querySelector<HTMLElement>('[data-project-current]');
-
-  if (experience && stage && panels.length && current) {
-    let activeIndex = -1;
-    let wheelDistance = 0;
-    let touchStartY = 0;
-    let lockedUntil = 0;
-
-    const setActive = (index: number) => {
-      if (index === activeIndex) return;
-      activeIndex = index;
-      panels.forEach((panel, panelIndex) => {
-        const active = panelIndex === index;
-        panel.classList.toggle('is-active', active);
-        panel.setAttribute('aria-hidden', String(!active));
-      });
-      current.textContent = String(index + 1).padStart(2, '0');
-    };
-
-    const moveProject = (direction: number) => {
-      const nextIndex = activeIndex + direction;
-      if (nextIndex < 0 || nextIndex >= panels.length) return false;
-      setActive(nextIndex);
-      lockedUntil = Date.now() + 380;
-      return true;
-    };
-
-    const canMove = (direction: number) => direction > 0 ? activeIndex < panels.length - 1 : activeIndex > 0;
-
-    stage.addEventListener('wheel', (event) => {
-      const direction = Math.sign(event.deltaY);
-      if (!direction || !canMove(direction)) return;
-      event.preventDefault();
-      if (Date.now() < lockedUntil) return;
-      wheelDistance += event.deltaY;
-      if (Math.abs(wheelDistance) < 32) return;
-      moveProject(Math.sign(wheelDistance));
-      wheelDistance = 0;
-    }, { passive: false });
-
-    stage.addEventListener('touchstart', (event) => {
-      touchStartY = event.touches[0]?.clientY ?? 0;
-    }, { passive: true });
-
-    stage.addEventListener('touchmove', (event) => {
-      const offset = touchStartY - (event.touches[0]?.clientY ?? touchStartY);
-      const direction = Math.sign(offset);
-      if (direction && canMove(direction)) event.preventDefault();
-    }, { passive: false });
-
-    stage.addEventListener('touchend', (event) => {
-      const endY = event.changedTouches[0]?.clientY ?? touchStartY;
-      const offset = touchStartY - endY;
-      if (Math.abs(offset) >= 32 && Date.now() >= lockedUntil) moveProject(Math.sign(offset));
-      touchStartY = 0;
-    }, { passive: true });
-
-    stage.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowDown' || event.key === 'PageDown') {
-        if (moveProject(1)) event.preventDefault();
-      }
-      if (event.key === 'ArrowUp' || event.key === 'PageUp') {
-        if (moveProject(-1)) event.preventDefault();
-      }
-    });
-
-    stage.tabIndex = 0;
-    stage.setAttribute('aria-label', 'Project gallery. Use the mouse wheel, swipe, or arrow keys to change projects.');
-    setActive(0);
-  }
-</script>
-
-<script>
-  const switchEl = document.querySelector<HTMLElement>('.projects-switch');
-  const experienceView = document.getElementById('projects-experience');
-  const listView = document.getElementById('projects-list');
-
-  if (switchEl && experienceView && listView) {
-    switchEl.addEventListener('click', (event) => {
-      const target = event.target as HTMLElement;
-      const button = target.closest<HTMLElement>('[data-view]');
-      if (!button || button.classList.contains('is-active')) return;
-      const showList = button.dataset.view === 'list';
-      experienceView.hidden = showList;
-      listView.hidden = !showList;
-      switchEl.querySelectorAll('[data-view]').forEach((item) => {
-        const active = item === button;
-        item.classList.toggle('is-active', active);
-        item.setAttribute('aria-selected', String(active));
-      });
-    });
-  }
-</script>

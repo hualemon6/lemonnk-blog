@@ -1,0 +1,63 @@
+---
+import Window from '../Window.astro';
+import Icon from '../Icon.astro';
+import { WINDOW_SPECS, REGION_ORDER } from '../../config/map';
+import { ui } from '../../config/i18n';
+import type { MapModel } from '../../config/map';
+
+interface Props { model: MapModel; }
+const { model } = Astro.props;
+const spec = WINDOW_SPECS.legend;
+const total = model.nodes.length;
+---
+<Window id="legend" titleKey="window.legend" title="图例" width={spec.width!} side={spec.side} index={spec.index} labelled="图例与筛选">
+  <div class="legend" role="group" aria-label="按分类筛选" data-i18n-aria="map.filter">
+    <button type="button" class="legend-row" data-map-filter="all" aria-pressed="true">
+      <span class="legend-dot legend-dot-all" aria-hidden="true"></span>
+      <span class="legend-label" data-i18n="journey.all">全部经历</span>
+      <span class="legend-count">{String(total).padStart(2, '0')}</span>
+    </button>
+    {REGION_ORDER.map((region) => (
+      <button type="button" class="legend-row" data-map-filter={region} aria-pressed="false">
+        <span class="legend-dot" data-region={region} aria-hidden="true"></span>
+        <span class="legend-label" data-i18n={`journey.${region}`}>{ui.zh[`journey.${region}`]}</span>
+        <span class="legend-count">{String(model.regions.find((item) => item.id === region)?.count ?? 0).padStart(2, '0')}</span>
+      </button>
+    ))}
+    <p class="legend-foot"><Icon name="layers" size={13} /><span data-i18n="map.floorNote">楼层按年份划分，项目集常驻</span></p>
+  </div>
+</Window>
+
+<style>
+  .legend { display: grid; gap: 2px; }
+  .legend-row {
+    display: flex; align-items: center; gap: 10px;
+    width: 100%; height: 34px; padding: 0 10px;
+    border: 0; border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-ui);
+    text-align: left; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  .legend-row:hover { background: var(--color-panel-soft); color: var(--color-text); }
+  .legend-row[aria-pressed='true'] {
+    background: var(--glass-fill-strong);
+    color: var(--color-text);
+    box-shadow: inset 0 0 0 1px var(--glass-rim-outer);
+  }
+  .legend-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+  .legend-dot[data-region='learning'] { background: var(--color-learning); }
+  .legend-dot[data-region='research'] { background: var(--color-research); }
+  .legend-dot[data-region='project'] { background: var(--color-project); }
+  .legend-dot[data-region='life'] { background: var(--color-life); }
+  .legend-dot-all { background: linear-gradient(135deg, var(--color-learning), var(--color-life)); }
+  .legend-label { flex: 1; }
+  .legend-count { font-size: var(--font-size-caption); font-variant-numeric: tabular-nums; opacity: 0.65; }
+  .legend-foot {
+    display: flex; align-items: center; gap: 7px;
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px solid var(--glass-rim-outer);
+    color: var(--color-text-muted); font-size: var(--font-size-caption);
+  }
+</style>

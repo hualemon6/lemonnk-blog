@@ -1,4 +1,4 @@
-// client.ts — 浏览器端交互：主题切换、界面语言切换、滚动收起导航、代码块增强
+// client.ts — 浏览器端交互：主题切换、界面语言切换、代码块增强
 import { ui } from '../config/i18n';
 
 const THEME_KEY = 'theme';
@@ -155,14 +155,6 @@ document.querySelectorAll<HTMLElement>('pre.astro-code').forEach((pre) => {
 });
 
 applyCodeTheme();
-
-// 滚动超过阈值后，给导航加 .scrolled：隐藏中间导航项，保留站名和工具按钮
-const header = document.querySelector('.site-header');
-if (header) {
-  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 24);
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-}
 
 applyTheme();
 applyLang();

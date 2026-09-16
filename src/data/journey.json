@@ -1,0 +1,43 @@
+[
+  {
+    "postId": "hello-world",
+    "category": "life",
+    "title": "从这里，开始记录",
+    "summary": "给想法一个落点，也给一路的成长留下坐标。",
+    "detail": "博客的第一篇记录。把数据结构、力扣心得和 AI 项目写进计划，也开始尝试用 ME、AI 和 Dual 三种方式整理知识与想法。",
+    "visual": "journal"
+  },
+  {
+    "postId": "math-formula-test",
+    "category": "learning",
+    "title": "在算法里，寻找思路",
+    "summary": "从「接雨水」出发，整理问题与解法。",
+    "detail": "把解题过程写下来：从接雨水问题出发，记录算法思路，梳理自己理解问题的方式。",
+    "visual": "code"
+  },
+  {
+    "postId": "20260814大模型横评",
+    "category": "learning",
+    "title": "看看大模型的不同侧面",
+    "summary": "一次关于模型能力、编程与使用体验的整理。",
+    "detail": "整理 2026 年 8 月的大模型横评资料，从综合能力到编程表现，建立一份便于回看的学习记录。",
+    "visual": "signal"
+  },
+  {
+    "postId": "最近一直在准备科研进组的事情",
+    "category": "research",
+    "title": "向科研，再走近一点",
+    "summary": "寻找研究方向，准备进组，补齐基础。",
+    "detail": "新学期里的一段记录：适应环境、寻找合适的研究组，并梳理大语言模型、多模态、后训练与智能体等需要继续学习的内容。希望能做真正有意义的课题。",
+    "visual": "network"
+  },
+  {
+    "postId": "rnn-lstm-gru",
+    "category": "learning",
+    "title": "把循环神经网络画清楚",
+    "summary": "用三张图，串起 RNN、BPTT 与 LSTM / GRU。",
+    "detail": "从循环神经网络的基本结构，到时间反向传播，再到 LSTM 与 GRU 的门控机制，用图示整理知识之间的联系。",
+    "image": "/images/posts/rnn-lstm-gru/01-vanilla-rnn.png",
+    "visual": "network"
+  }
+]

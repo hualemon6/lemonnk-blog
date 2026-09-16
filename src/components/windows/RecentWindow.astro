@@ -1,0 +1,59 @@
+---
+import Window from '../Window.astro';
+import Icon from '../Icon.astro';
+import { WINDOW_SPECS } from '../../config/map';
+import { path } from '../../utils/path';
+import { readingTime } from '../../utils/reading-time';
+
+interface Props {
+  title: string;
+  slug: string;
+  date: Date;
+  body: string;
+  tags: string[];
+}
+
+const { title, slug, date, body, tags } = Astro.props;
+const spec = WINDOW_SPECS.recent;
+const minutes = readingTime(body);
+const formatter = new Intl.DateTimeFormat('zh-CN', { month: 'long', day: 'numeric' });
+---
+<Window id="recent" titleKey="window.recent" title="最近的文字" width={spec.width!} side={spec.side} index={spec.index} labelled="最近的文章">
+  <a class="recent" href={path(`/posts/${slug}/`)}>
+    <p class="recent-date">{formatter.format(date)} · <span data-i18n="minRead" data-n={minutes}>约 {minutes} 分钟</span></p>
+    <p class="recent-title">{title}<Icon name="diagonal" size={13} /></p>
+    {tags.length > 0 && <p class="recent-tags">{tags.map((tag) => <span>{tag}</span>)}</p>}
+  </a>
+</Window>
+
+<style>
+  .recent {
+    display: block;
+    margin: -6px -8px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    transition: background 160ms ease;
+  }
+  .recent:hover { background: var(--glass-fill-strong); }
+  .recent-date { font-size: var(--font-size-caption); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .recent-title {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 5px;
+    font-size: var(--font-size-card);
+    font-weight: 580;
+    line-height: 1.5;
+    letter-spacing: -0.015em;
+  }
+  .recent-title svg { flex-shrink: 0; margin-left: auto; color: var(--color-text-muted); transition: color 160ms ease, transform 160ms ease; }
+  .recent:hover .recent-title { color: var(--color-accent); }
+  .recent:hover .recent-title svg { color: var(--color-accent); transform: translate(1px, -1px); }
+  .recent-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .recent-tags span {
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-panel-soft);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-micro);
+    letter-spacing: 0.02em;
+  }
+</style>

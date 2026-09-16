@@ -1,0 +1,64 @@
+---
+import MapStage from './MapStage.astro';
+import Icon from './Icon.astro';
+import type { MapModel } from '../config/map';
+
+interface WindowEntry { id: string; titleKey: string; title: string; icon: string; }
+
+interface Props {
+  model: MapModel;
+  floor: string;
+  mode?: 'floor' | 'all';
+  selectedId?: string;
+  highlightIds?: string[];
+  windows: WindowEntry[];
+}
+
+const { model, floor, mode = 'floor', selectedId, highlightIds, windows } = Astro.props;
+---
+<div class="map-shell" data-map-shell>
+  <MapStage model={model} floor={floor} mode={mode} selectedId={selectedId} highlightIds={highlightIds} />
+
+  <div class="window-layer" data-window-layer>
+    <slot />
+  </div>
+
+  <div class="window-dock glass" data-window-dock aria-label="窗柜" data-i18n-aria="window.dock">
+    {windows.map((item) => (
+      <button class="dock-button" type="button" data-dock={item.id} title={item.title} aria-label={item.title} data-i18n-title={item.titleKey} data-i18n-aria={item.titleKey}>
+        <Icon name={item.icon} size={16} />
+      </button>
+    ))}
+    <button class="dock-reset" type="button" data-window-reset>
+      <Icon name="reset" size={14} />
+      <span data-i18n="window.reset">复位布局</span>
+    </button>
+  </div>
+
+  <div class="map-tip" data-map-tip aria-hidden="true"><strong data-tip-title></strong><span data-tip-meta></span></div>
+  <div class="snap-guide" data-snap-x data-axis="x" hidden></div>
+  <div class="snap-guide" data-snap-y data-axis="y" hidden></div>
+
+  <div class="zoom-controls glass" role="group" aria-label="地图缩放" data-i18n-aria="map.zoom">
+    <button class="zoom-button" type="button" data-zoom="in" aria-label="放大" data-i18n-aria="map.zoomIn"><Icon name="plus" size={16} /></button>
+    <button class="zoom-button" type="button" data-zoom="out" aria-label="缩小" data-i18n-aria="map.zoomOut"><Icon name="minus" size={16} /></button>
+    <span class="zoom-divider" aria-hidden="true"></span>
+    <button class="zoom-button" type="button" data-zoom="fit" aria-label="适应全部" data-i18n-aria="map.zoomFit"><Icon name="fit" size={16} /></button>
+    <button class="zoom-button" type="button" data-zoom="reset" aria-label="复位视图" data-i18n-aria="map.zoomReset"><Icon name="home" size={16} /></button>
+  </div>
+</div>
+
+<noscript>
+  <style>
+    .window-layer { visibility: visible !important; }
+  </style>
+</noscript>
+
+<style>
+  .map-shell:not([data-ready]) .window-layer { visibility: hidden; }
+</style>
+
+<script>
+  import '../utils/map';
+  import '../utils/windows';
+</script>

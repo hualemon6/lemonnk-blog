@@ -1,0 +1,113 @@
+---
+import Window from '../Window.astro';
+import Icon from '../Icon.astro';
+import JourneyArtwork from '../JourneyArtwork.astro';
+import { WINDOW_SPECS } from '../../config/map';
+import type { MapNode } from '../../config/map';
+import type { JourneyVisual } from '../../config/journey';
+import { ui } from '../../config/i18n';
+import { path } from '../../utils/path';
+
+interface Props {
+  nodes: MapNode[];
+  selectedId?: string;
+}
+
+const { nodes, selectedId } = Astro.props;
+const spec = WINDOW_SPECS.detail;
+const initial = nodes.find((node) => node.id === selectedId) ?? nodes.at(-1);
+---
+<Window id="detail" titleKey="window.detail" title="经历详情" width={spec.width!} side={spec.side} labelled="经历详情">
+  <div class="detail-stack" aria-live="polite" aria-atomic="true">
+    {nodes.map((node) => (
+      <article class="detail" data-detail-node={node.id} data-category={node.category} hidden={node.id !== initial?.id}>
+        <div class="detail-art" aria-hidden="true">
+          {node.image ? (
+            <img src={path(node.image)} alt="" width="220" height="120" loading="lazy" />
+          ) : (
+            <JourneyArtwork kind={node.visual as JourneyVisual} />
+          )}
+        </div>
+        <div class="detail-copy">
+          <p class="detail-kicker">
+            <span data-i18n={`journey.${node.category}`}>{ui.zh[`journey.${node.category}`]}</span>
+            <span aria-hidden="true">·</span>
+            {node.date ? <time datetime={node.date}>{node.date.replaceAll('-', '.')}</time> : <span data-i18n="journey.undated">未标注时间</span>}
+          </p>
+          <h3 class="detail-title">{node.title}</h3>
+          <p class="detail-body">{node.detail}</p>
+        </div>
+        {node.url && (
+          <a class="detail-link" href={node.url} target={node.external ? '_blank' : undefined} rel={node.external ? 'noopener noreferrer' : undefined}>
+            <span data-i18n={node.category === 'project' ? 'journey.openProject' : 'journey.read'}>
+              {node.category === 'project' ? '查看项目' : '阅读全文'}
+            </span>
+            <Icon name="diagonal" size={13} />
+          </a>
+        )}
+      </article>
+    ))}
+    <p class="detail-empty" hidden={nodes.length > 0} data-i18n="journey.empty">这一页，留给接下来的故事。</p>
+  </div>
+</Window>
+
+<style>
+  .detail-stack { min-height: 92px; }
+  .detail {
+    display: grid;
+    grid-template-columns: 108px minmax(0, 1fr) auto;
+    gap: 6px 18px;
+    align-items: center;
+  }
+  .detail-art {
+    height: 68px;
+    display: grid;
+    place-items: center;
+    color: var(--detail-color, var(--color-accent));
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--detail-color, var(--color-accent)) 7%, transparent);
+  }
+  .detail-art img { width: 100%; height: 100%; object-fit: cover; }
+  .detail[data-category='learning'] { --detail-color: var(--color-learning); }
+  .detail[data-category='research'] { --detail-color: var(--color-research); }
+  .detail[data-category='project'] { --detail-color: var(--color-project); }
+  .detail[data-category='life'] { --detail-color: var(--color-life); }
+  .detail-copy { min-width: 0; }
+  .detail-kicker {
+    display: flex; align-items: center; gap: 7px;
+    font-size: var(--font-size-caption);
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .detail-kicker > span:first-child { color: var(--detail-color, var(--color-accent)); font-weight: 600; }
+  .detail-title { margin-top: 4px; font-size: 19px; font-weight: 640; letter-spacing: -0.025em; line-height: 1.35; }
+  .detail-body {
+    margin-top: 5px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .detail-link {
+    display: flex; align-items: center; gap: 6px;
+    height: 34px; padding: 0 15px;
+    border-radius: var(--radius-pill);
+    background: var(--glass-fill-strong);
+    border: 1px solid var(--glass-rim-outer);
+    color: var(--color-accent);
+    font-size: var(--font-size-label);
+    font-weight: 560;
+    white-space: nowrap;
+    transition: background 180ms ease, color 180ms ease;
+  }
+  .detail-link:hover { background: var(--color-accent); color: var(--color-on-accent); }
+  .detail-empty { font-size: var(--font-size-small); color: var(--color-text-muted); }
+
+  /* 复用旧插图组件的尺寸规则 */
+  :global(.detail-art .journey-art) { height: 100%; width: 100%; }
+  :global(.detail-art .journey-art svg) { display: block; height: 100%; width: 100%; }
+</style>

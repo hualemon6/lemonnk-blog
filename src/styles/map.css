@@ -1,0 +1,232 @@
+/* map.css — 地图层：世界背景、分区地块、干线、节点。地图动，浮窗不动。 */
+
+.map-stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background:
+    radial-gradient(1200px 640px at 62% -12%, var(--map-sheen), transparent 68%),
+    radial-gradient(900px 520px at 8% 108%, var(--map-sheen), transparent 70%),
+    linear-gradient(160deg, var(--map-canvas-1), var(--map-canvas-2));
+  cursor: grab;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+.map-stage.is-panning { cursor: grabbing; }
+.map-stage.is-panning .map-node { pointer-events: none; }
+
+.map-camera {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.map-camera.is-animating { transition: transform 420ms cubic-bezier(0.22, 0.82, 0.2, 1); }
+
+.map-world { display: block; overflow: visible; }
+
+/* ── 世界底纹 ── */
+.world-plate { fill: transparent; }
+.world-grid line { stroke: var(--map-grid); stroke-width: 1; }
+
+/* ── 分区地块 ── */
+.map-region { transition: opacity 320ms ease; }
+.map-region .region-plate {
+  fill: var(--map-land);
+  stroke: var(--map-land-edge);
+  stroke-width: 1.4;
+  stroke-dasharray: 7 9;
+  rx: 34;
+}
+.map-region .region-tint { opacity: 0.055; }
+.map-region[data-region='learning'] { --region-color: var(--color-learning); }
+.map-region[data-region='research'] { --region-color: var(--color-research); }
+.map-region[data-region='project'] { --region-color: var(--color-project); }
+.map-region[data-region='life'] { --region-color: var(--color-life); }
+.map-region .region-tint { fill: var(--region-color); }
+.map-region .region-tag {
+  fill: var(--region-color);
+  opacity: 0.9;
+}
+.map-region .region-label {
+  fill: var(--map-land-label);
+  font-family: var(--font-family-ui);
+  font-size: 21px;
+  font-weight: 620;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.map-region .region-count {
+  fill: var(--region-color);
+  font-family: var(--font-family-ui);
+  font-size: 21px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.map-region.is-empty { opacity: 0.34; }
+.map-region.is-dimmed { opacity: 0.24; }
+
+/* ── 干线 ── */
+.map-trunk path {
+  fill: none;
+  stroke: var(--map-route);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 12 10;
+  animation: trunk-flow 34s linear infinite;
+}
+.map-trunk .junction { fill: var(--map-route); stroke: none; }
+@keyframes trunk-flow {
+  to { stroke-dashoffset: -220; }
+}
+
+/* ── 节点 ── */
+.map-node { cursor: pointer; }
+.map-node .node-plate {
+  fill: var(--node-soft);
+  stroke: var(--node-color);
+  stroke-opacity: 0.42;
+  stroke-width: 1.4;
+  transition: stroke-opacity 180ms ease, fill 180ms ease;
+}
+.map-node[data-category='learning'] { --node-color: var(--color-learning); --node-soft: var(--color-learning-soft); }
+.map-node[data-category='research'] { --node-color: var(--color-research); --node-soft: var(--color-research-soft); }
+.map-node[data-category='project'] { --node-color: var(--color-project); --node-soft: var(--color-project-soft); }
+.map-node[data-category='life'] { --node-color: var(--color-life); --node-soft: var(--color-life-soft); }
+
+.map-node .node-glyph { color: var(--node-color); opacity: 0.5; }
+.map-node .node-thumb { opacity: 0; transition: opacity 220ms ease; }
+.map-node .node-scrim { opacity: 0; }
+.map-node .node-date,
+.map-node .node-title {
+  font-family: var(--font-family-ui);
+  text-anchor: middle;
+  fill: var(--color-text-muted);
+  transition: opacity 200ms ease;
+}
+.map-node .node-date {
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.map-node .node-title {
+  font-size: 26px;
+  font-weight: 560;
+  fill: var(--color-text);
+  letter-spacing: -0.02em;
+}
+.map-node .node-pin {
+  fill: var(--node-color);
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+.map-node .node-halo {
+  fill: none;
+  stroke: var(--node-color);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+
+.map-node:hover .node-plate { stroke-opacity: 0.95; stroke-width: 2.4; }
+.map-node:hover .node-halo { opacity: 0.34; }
+
+.map-node.is-selected .node-plate {
+  fill: var(--node-color);
+  stroke: var(--node-color);
+  stroke-opacity: 1;
+}
+.map-node.is-selected .node-glyph { color: #fff; opacity: 0.85; }
+.map-node.is-selected .node-title { fill: var(--color-text); font-weight: 640; }
+.map-node.is-selected .node-halo { opacity: 0.5; animation: node-pulse 2.6s ease-in-out infinite; }
+.map-node.is-selected .node-date { color: var(--node-color); fill: var(--node-color); font-weight: 620; }
+.map-node.is-selected .node-scrim { opacity: 0; }
+@keyframes node-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.22; transform: scale(1.04); }
+}
+
+.map-node.is-dimmed { opacity: 0.2; }
+.map-node.is-hidden { display: none; }
+
+/* ── LOD：按相机缩放分级 ── */
+.map-world[data-lod='far'] .node-date,
+.map-world[data-lod='far'] .node-title,
+.map-world[data-lod='far'] .node-thumb,
+.map-world[data-lod='far'] .node-scrim { opacity: 0; }
+.map-world[data-lod='far'] .node-glyph { opacity: 0.72; }
+
+.map-world[data-lod='mid'] .node-thumb,
+.map-world[data-lod='mid'] .node-scrim { opacity: 0; }
+.map-world[data-lod='mid'] .node-glyph { opacity: 0.42; }
+
+.map-world[data-lod='near'] .node-glyph { opacity: 0; }
+.map-world[data-lod='near'] .node-thumb { opacity: 1; }
+.map-world[data-lod='near'] .node-scrim { opacity: 0.62; }
+.map-world[data-lod='near'] .node-title { fill: var(--color-text); }
+
+/* ── 悬停提示卡（DOM，浮在屏幕层） ── */
+.map-tip {
+  position: fixed;
+  z-index: 39;
+  max-width: 260px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--glass-fill-strong);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--glass-rim-outer);
+  box-shadow: var(--glass-shadow);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -6px);
+  transition: opacity 150ms ease;
+}
+.map-tip.is-visible { opacity: 1; }
+.map-tip strong {
+  display: block;
+  font-size: var(--font-size-ui);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.map-tip span {
+  display: block;
+  margin-top: 3px;
+  font-size: var(--font-size-caption);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 地图提示（首次进入的引导） ── */
+.map-hint {
+  position: fixed;
+  left: 50%;
+  bottom: 82px;
+  transform: translateX(-50%);
+  z-index: 20;
+  padding: 7px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: blur(18px) saturate(170%);
+  backdrop-filter: blur(18px) saturate(170%);
+  border: 1px solid var(--glass-rim-outer);
+  box-shadow: var(--glass-shadow);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-caption);
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  transition: opacity 400ms ease;
+}
+.map-hint.is-gone { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .map-camera.is-animating { transition: none; }
+  .map-trunk path { animation: none; }
+  .map-node.is-selected .node-halo { animation: none; }
+}

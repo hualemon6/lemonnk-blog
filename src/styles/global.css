@@ -1,6 +1,8 @@
-/* global.css — 全站基础样式：reset、排版基线、导航、页脚 */
+/* global.css — reset、排版基线、全站基础。地图与浮窗样式在 map.css / windows.css */
 
 @import './tokens.css';
+@import './map.css';
+@import './windows.css';
 
 *,
 *::before,
@@ -16,25 +18,21 @@ html {
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-family: var(--font-family-ui);
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
 }
 
-/* 阅读页（文章页）背景更白 */
-body.page-prose {
-  background: var(--color-prose-bg);
-}
+button, input, select { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
 
 a {
   color: inherit;
   text-decoration: none;
-}
-
-a:hover {
-  color: var(--color-accent);
 }
 
 img {
@@ -47,7 +45,6 @@ img {
   color: #fff;
 }
 
-/* 键盘焦点可见性 */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 3px;
@@ -62,4 +59,15 @@ img {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
   }
+}
+
+/* 屏幕阅读器专用文本 */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
