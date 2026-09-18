@@ -1,50 +1,52 @@
 ---
+// index.astro — 所有标签列表
 import Layout from '../../layouts/Layout.astro';
-import MapShell from '../../components/MapShell.astro';
-import IdentityWindow from '../../components/windows/IdentityWindow.astro';
-import LegendWindow from '../../components/windows/LegendWindow.astro';
-import ListWindow from '../../components/windows/ListWindow.astro';
-import { loadMap, DOCK_WINDOWS } from '../../config/model';
+import { getCollection } from 'astro:content';
 import { path } from '../../utils/path';
 
-const { model, posts, floors, defaultFloor } = await loadMap();
-const windows = DOCK_WINDOWS.filter((item) => ['identity', 'legend', 'list'].includes(item.id));
+const posts = (await getCollection('posts')).filter((post) => !post.data.draft);
 
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
-  for (const tag of post.data.tags) tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
 }
-const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+const tags = [...tagCounts.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 ---
 
-<Layout title="标签 · LemonNK" floors={floors} activeFloor={defaultFloor}>
-  <MapShell model={model} floor="all" mode="all" selectedId={model.nodes.at(-1)?.id} windows={windows}>
-    <IdentityWindow />
-    <LegendWindow model={model} />
-    <ListWindow titleKey="list.tags" title="标签" labelled="标签列表">
-      <h1 class="visually-hidden" data-i18n="tags.title">标签</h1>
-      <ul class="tag-cloud">
-        {tags.map(([tag, count]) => (
-          <li>
-            <a href={path(`/tags/${tag}/`)}>{tag}<span>{count}</span></a>
-          </li>
-        ))}
-      </ul>
-    </ListWindow>
-  </MapShell>
+<Layout title="标签">
+  <h1 data-i18n="tags.title">标签</h1>
+  <ul class="tag-list">
+    {tags.map(([tag, count]) => (
+      <li>
+        <a href={path(`/tags/${tag}/`)}>{tag}</a>
+        <span class="count">({count})</span>
+      </li>
+    ))}
+  </ul>
 </Layout>
 
 <style>
-  .tag-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag-cloud a {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px;
-    border-radius: var(--radius-pill);
-    background: var(--glass-fill-strong);
-    box-shadow: inset 0 0 0 1px var(--glass-rim-outer);
-    font-size: var(--font-size-label);
-    transition: color 150ms ease, background 150ms ease;
+  h1 {
+    font-size: var(--font-size-title);
+    margin: var(--space-md) 0 var(--space-lg);
   }
-  .tag-cloud a:hover { color: var(--color-accent); background: var(--color-accent-soft); }
-  .tag-cloud a > span { color: var(--color-text-muted); font-size: var(--font-size-micro); font-variant-numeric: tabular-nums; }
+
+  .tag-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .tag-list li {
+    font-size: var(--font-size-base);
+  }
+
+  .count {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
 </style>

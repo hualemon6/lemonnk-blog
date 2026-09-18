@@ -1,56 +1,49 @@
 ---
+// [tag].astro — 某个标签下的所有文章
+// URL: /tags/<tag>/
 import Layout from '../../layouts/Layout.astro';
-import MapShell from '../../components/MapShell.astro';
-import IdentityWindow from '../../components/windows/IdentityWindow.astro';
-import LegendWindow from '../../components/windows/LegendWindow.astro';
-import ListWindow from '../../components/windows/ListWindow.astro';
-import { loadMap, DOCK_WINDOWS } from '../../config/model';
-import { path } from '../../utils/path';
+import PostItem from '../../components/PostItem.astro';
+import { getCollection } from 'astro:content';
 import { readingTime } from '../../utils/reading-time';
 
 export async function getStaticPaths() {
-  const { posts } = await loadMap();
+  const posts = (await getCollection('posts')).filter((post) => !post.data.draft);
   const tags = new Set(posts.flatMap((post) => post.data.tags));
-  return [...tags].map((tag) => ({ params: { tag } }));
+  return [...tags].map((tag) => ({
+    params: { tag },
+  }));
 }
 
 const { tag } = Astro.params;
-const { model, posts, floors, defaultFloor } = await loadMap();
-const windows = DOCK_WINDOWS.filter((item) => ['identity', 'legend', 'list'].includes(item.id));
 
-const matched = posts
-  .filter((post) => post.data.tags.includes(tag))
+const posts = (await getCollection('posts'))
+  .filter((post) => !post.data.draft && post.data.tags.includes(tag))
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-const highlightIds = matched.map((post) => `post-${post.id}`);
 ---
 
-<Layout title={`标签：${tag} · LemonNK`} floors={floors} activeFloor={defaultFloor}>
-  <MapShell model={model} floor="all" mode="all" selectedId={highlightIds[0]} highlightIds={highlightIds} windows={windows}>
-    <IdentityWindow />
-    <LegendWindow model={model} />
-    <ListWindow titleKey="list.tags" title="标签" labelled={`标签 ${tag}`}>
-      <p class="tag-head"><span data-i18n="tag.prefix">标签</span> · {tag} · {matched.length}</p>
-      <ol class="tag-posts">
-        {matched.map((post) => (
-          <li class="tag-post">
-            <h3><a href={path(`/posts/${post.id}/`)}>{post.data.title}</a></h3>
-            <p class="tag-meta">
-              <time datetime={post.data.pubDate.toISOString()}>{post.data.pubDate.toISOString().slice(0, 10)}</time>
-              <span>·</span>
-              <span data-i18n="minRead" data-n={readingTime(post.body)}>约 {readingTime(post.body)} 分钟</span>
-            </p>
-          </li>
-        ))}
-      </ol>
-    </ListWindow>
-  </MapShell>
+<Layout title={`标签：${tag}`}>
+  <h1><span data-i18n="tag.prefix">标签</span>：{tag}</h1>
+  <ul>
+    {posts.map((post) => (
+      <PostItem
+        slug={post.id}
+        title={post.data.title}
+        pubDate={post.data.pubDate}
+        readingTime={readingTime(post.body)}
+        tags={post.data.tags}
+      />
+    ))}
+  </ul>
 </Layout>
 
 <style>
-  .tag-head { padding-bottom: 8px; border-bottom: 1px solid var(--glass-rim-outer); color: var(--color-text-muted); font-size: var(--font-size-caption); }
-  .tag-posts { display: grid; gap: 2px; margin-top: 8px; }
-  .tag-post { padding: 8px; border-radius: var(--radius-sm); transition: background 150ms ease; }
-  .tag-post:hover { background: var(--glass-fill-strong); }
-  .tag-post h3 { font-size: var(--font-size-card); font-weight: 580; line-height: 1.4; }
-  .tag-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; font-size: var(--font-size-micro); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  h1 {
+    font-size: var(--font-size-title);
+    margin: var(--space-md) 0 var(--space-lg);
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+  }
 </style>

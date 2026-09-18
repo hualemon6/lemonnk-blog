@@ -1,15 +1,9 @@
 ---
 import Layout from './Layout.astro';
-import MapShell from '../components/MapShell.astro';
-import Window from '../components/Window.astro';
-import DetailWindow from '../components/windows/DetailWindow.astro';
 import PostMeta from '../components/PostMeta.astro';
-import { loadMap, DOCK_WINDOWS } from '../config/model';
-import { WINDOW_SPECS } from '../config/map';
 import { path } from '../utils/path';
 
 interface Props {
-  slug: string;
   title: string;
   pubDate: Date;
   tags: string[];
@@ -20,95 +14,84 @@ interface Props {
   next?: { slug: string; title: string };
 }
 
-const { slug, title, pubDate, tags, readingTime, authoringMode = 'me', aiContent = '', prev, next } = Astro.props;
+const { title, pubDate, tags, readingTime, authoringMode = 'me', aiContent = '', prev, next } = Astro.props;
 const hasDualEditions = authoringMode === 'dual';
-
-const { model, floors, defaultFloor } = await loadMap();
-const windows = DOCK_WINDOWS.filter((item) => ['reader'].includes(item.id));
-const nodeId = `post-${slug}`;
-const node = model.nodes.find((item) => item.id === nodeId);
-const year = String(pubDate.getFullYear());
-const floor = model.floors.some((item) => item.id === year) ? year : defaultFloor;
-const spec = WINDOW_SPECS.reader;
 ---
 
-<Layout title={title} floors={floors} activeFloor={floor}>
-  <MapShell model={model} floor={floor} mode="floor" selectedId={node?.id} windows={windows}>
-    <DetailWindow nodes={model.nodes} selectedId={node?.id} />
-    <Window id="reader" titleKey="window.reader" title="正文" width={spec.width!} side={spec.side} labelled={title} scroll="scroll-tall">
-      <article class="post">
-        <header class="post-header">
-          <h1>{title}</h1>
-          <PostMeta pubDate={pubDate} readingTime={readingTime} tags={tags} authoringMode={hasDualEditions ? undefined : authoringMode} />
-          {hasDualEditions && (
-            <div class="edition-switch" role="tablist" aria-label="Article edition">
-              <button class="edition-choice is-active" type="button" role="tab" aria-selected="true" aria-controls="edition-me" data-edition="me">ME</button>
-              <button class="edition-choice" type="button" role="tab" aria-selected="false" aria-controls="edition-ai" data-edition="ai">AI</button>
-            </div>
-          )}
-        </header>
-
-        <div class="post-editions">
-          <div id="edition-me" class="prose post-edition" role="tabpanel" data-edition-panel="me">
-            <slot />
-          </div>
-          {hasDualEditions && (
-            <div id="edition-ai" class="prose post-edition" role="tabpanel" data-edition-panel="ai" hidden>
-              {aiContent ? <Fragment set:html={aiContent} /> : <p class="edition-empty">The AI edition is being prepared.</p>}
-            </div>
-          )}
+<Layout title={title} bodyClass="page-prose">
+  <article>
+    <header class="post-header">
+      <h1>{title}</h1>
+      <PostMeta pubDate={pubDate} readingTime={readingTime} tags={tags} authoringMode={hasDualEditions ? undefined : authoringMode} />
+      {hasDualEditions && (
+        <div class="edition-switch" role="tablist" aria-label="Article edition">
+          <button class="edition-choice is-active" type="button" role="tab" aria-selected="true" aria-controls="edition-me" data-edition="me">ME</button>
+          <button class="edition-choice" type="button" role="tab" aria-selected="false" aria-controls="edition-ai" data-edition="ai">AI</button>
         </div>
+      )}
+    </header>
 
-        <nav class="post-nav">
-          {prev && <a href={path(`/posts/${prev.slug}/`)} class="nav-link">← {prev.title}</a>}
-          {next && <a href={path(`/posts/${next.slug}/`)} class="nav-link">{next.title} →</a>}
-        </nav>
-      </article>
-    </Window>
+    <div class="post-editions">
+      <div id="edition-me" class="prose post-edition" role="tabpanel" data-edition-panel="me">
+        <slot />
+      </div>
+      {hasDualEditions && (
+        <div id="edition-ai" class="prose post-edition" role="tabpanel" data-edition-panel="ai" hidden>
+          {aiContent ? <Fragment set:html={aiContent} /> : <p class="edition-empty">The AI edition is being prepared.</p>}
+        </div>
+      )}
+    </div>
 
-    {hasDualEditions && (
-      <script is:inline>
-        const switcher = document.querySelector('.edition-switch');
-        const panels = Array.from(document.querySelectorAll('[data-edition-panel]'));
-        switcher?.addEventListener('click', (event) => {
-          const nextButton = event.target.closest('[data-edition]');
-          if (!nextButton || nextButton.classList.contains('is-active')) return;
-          const current = panels.find((panel) => !panel.hidden);
-          const incoming = panels.find((panel) => panel.dataset.editionPanel === nextButton.dataset.edition);
-          if (!current || !incoming) return;
-          switcher.querySelectorAll('[data-edition]').forEach((button) => {
-            const selected = button === nextButton;
-            button.classList.toggle('is-active', selected);
-            button.setAttribute('aria-selected', String(selected));
-          });
-          current.classList.add('is-leaving');
-          window.setTimeout(() => {
-            current.hidden = true;
-            current.classList.remove('is-leaving');
-            incoming.hidden = false;
-            incoming.classList.add('is-entering');
-            window.setTimeout(() => incoming.classList.remove('is-entering'), 240);
-          }, 110);
+    <nav class="post-nav">
+      {prev && <a href={path(`/posts/${prev.slug}/`)} class="nav-link">← {prev.title}</a>}
+      {next && <a href={path(`/posts/${next.slug}/`)} class="nav-link">{next.title} →</a>}
+    </nav>
+  </article>
+
+  {hasDualEditions && (
+    <script is:inline>
+      const switcher = document.querySelector('.edition-switch');
+      const panels = Array.from(document.querySelectorAll('[data-edition-panel]'));
+      switcher?.addEventListener('click', (event) => {
+        const nextButton = event.target.closest('[data-edition]');
+        if (!nextButton || nextButton.classList.contains('is-active')) return;
+        const current = panels.find((panel) => !panel.hidden);
+        const incoming = panels.find((panel) => panel.dataset.editionPanel === nextButton.dataset.edition);
+        if (!current || !incoming) return;
+        const scrollY = window.scrollY;
+        switcher.querySelectorAll('[data-edition]').forEach((button) => {
+          const selected = button === nextButton;
+          button.classList.toggle('is-active', selected);
+          button.setAttribute('aria-selected', String(selected));
         });
-      </script>
-    )}
-  </MapShell>
+        current.classList.add('is-leaving');
+        window.setTimeout(() => {
+          current.hidden = true;
+          current.classList.remove('is-leaving');
+          incoming.hidden = false;
+          incoming.classList.add('is-entering');
+          window.requestAnimationFrame(() => window.scrollTo({ top: Math.min(scrollY, document.documentElement.scrollHeight - window.innerHeight) }));
+          window.setTimeout(() => incoming.classList.remove('is-entering'), 240);
+        }, 110);
+      });
+    </script>
+  )}
 </Layout>
 
 <style>
-  .post-header { margin: 0 0 22px; }
-  .post h1 { font-size: clamp(1.6rem, 2.6vw, 30px); font-weight: 640; letter-spacing: -0.035em; line-height: 1.28; margin: 0 0 10px; }
-  .edition-switch { border: 1px solid var(--glass-rim-outer); border-radius: 999px; display: inline-grid; grid-template-columns: repeat(2, 1fr); margin-top: 12px; overflow: hidden; padding: 2px; position: relative; }
+  .post-header { margin: var(--space-md) 0 var(--space-lg); }
+  h1 { font-family: var(--font-family-display); font-size: clamp(2.55rem, 6vw, 4.15rem); font-weight: 700; letter-spacing: -.055em; line-height: .98; margin: var(--space-sm) 0; }
+  .edition-switch { border: 1px solid var(--color-border); border-radius: 999px; display: inline-grid; grid-template-columns: repeat(2, 1fr); margin-top: var(--space-sm); overflow: hidden; padding: 2px; position: relative; }
   .edition-switch::before { background: var(--color-text); border-radius: 999px; content: ''; height: calc(100% - 4px); left: 2px; position: absolute; top: 2px; transition: transform 240ms cubic-bezier(.2,.8,.2,1); width: calc(50% - 2px); }
   .edition-switch:has([data-edition='ai'].is-active)::before { transform: translateX(100%); }
   .edition-choice { background: transparent; border: 0; color: var(--color-text-muted); cursor: pointer; font: 700 10px/1 inherit; letter-spacing: .065em; min-width: 52px; padding: 7px 11px; position: relative; transition: color 180ms ease; z-index: 1; }
-  .edition-choice.is-active { color: var(--color-bg); }
+  .edition-choice.is-active { color: var(--color-prose-bg); }
   .edition-choice:focus-visible { outline-offset: -3px; }
   .post-edition.is-entering { animation: edition-in 220ms cubic-bezier(.2,.8,.2,1) both; }
   .post-edition.is-leaving { animation: edition-out 110ms ease both; }
   .edition-empty { color: var(--color-text-muted); font-style: italic; margin-top: var(--space-md); }
   @keyframes edition-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes edition-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-4px); } }
-  .post-nav { border-top: 1px solid var(--glass-rim-outer); display: flex; font-size: var(--font-size-small); gap: var(--space-sm); justify-content: space-between; margin-top: var(--space-lg); padding-top: var(--space-md); }
+  .post-nav { border-top: 1px solid var(--color-border); display: flex; font-size: var(--font-size-small); gap: var(--space-sm); justify-content: space-between; margin-top: var(--space-lg); padding-top: var(--space-md); }
   .nav-link { color: var(--color-text-muted); max-width: 45%; }
 </style>

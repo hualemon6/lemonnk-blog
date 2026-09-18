@@ -1,21 +1,18 @@
 ---
-// Layout.astro — 全站外壳：head、地图导航胶囊、浮窗容器
+// Layout.astro — 全站通用外壳：head、导航、内容区、页脚
 import Header from '../components/Header.astro';
 import { site } from '../config/site';
 import { path } from '../utils/path';
 import 'katex/dist/katex.min.css';
-import '@fontsource-variable/inter';
 import '../styles/global.css';
 import '../styles/prose.css';
 
 interface Props {
   title?: string;
   bodyClass?: string;
-  floors?: { id: string; label: string }[];
-  activeFloor?: string;
 }
 
-const { title = site.title, bodyClass, floors, activeFloor } = Astro.props;
+const { title = site.title, bodyClass } = Astro.props;
 ---
 
 <!doctype html>
@@ -23,10 +20,9 @@ const { title = site.title, bodyClass, floors, activeFloor } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href={path('/favicon.svg')} />
     <title>{title}</title>
-    <!-- 防闪烁：页面渲染前先恢复主题与语言 -->
+    <!-- 防闪烁：页面渲染前先恢复主题和语言，避免黑白模式闪一下 -->
     <script is:inline>
       (function () {
         try {
@@ -39,19 +35,32 @@ const { title = site.title, bodyClass, floors, activeFloor } = Astro.props;
     </script>
   </head>
   <body class:list={{ [bodyClass]: !!bodyClass }}>
-    <Header floors={floors} activeFloor={activeFloor} />
-    <main>
+    <Header />
+    <main class="container">
       <slot />
     </main>
+    <footer class="footer">
+      <p>© {new Date().getFullYear()} {site.name}</p>
+    </footer>
     <script>
       import '../utils/client';
     </script>
-    <!-- 兜底：若任一客户端脚本异常导致浮窗层未就绪，也要让内容可见 -->
-    <script is:inline>
-      window.setTimeout(function () {
-        var shell = document.querySelector('[data-map-shell]');
-        if (shell && !shell.hasAttribute('data-ready')) shell.setAttribute('data-ready', '1');
-      }, 1500);
-    </script>
   </body>
 </html>
+
+<style>
+  .container {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 0 var(--space-sm);
+    min-height: 70vh;
+  }
+
+  .footer {
+    max-width: var(--page-width);
+    margin: var(--space-lg) auto 0;
+    padding: var(--space-md) var(--space-sm) var(--space-lg);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-small);
+  }
+</style>
