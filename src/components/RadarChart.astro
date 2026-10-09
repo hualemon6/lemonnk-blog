@@ -2,22 +2,25 @@
 // RadarChart.astro — 发展指数雷达图
 // 构建期生成静态 SVG：无客户端 JS、无第三方依赖，全部颜色引用 tokens.css，
 // 因此深色模式与中英切换都自动生效（标签走 data-i18n，与全站同一套机制）。
+//
+// 布局：左侧雷达图 + 右侧数值表两栏。数值只出现在右侧表格里，坐标轴只留维度名——
+// 因为顶部那根轴的标签正对满值环顶点，若把数值也放在轴上，标签环必须离满值环
+// 28 单位以上才不重叠，那样轴标签会被推得很远、和图形脱节。
 import { metrics } from '../config/metrics';
 import { ui } from '../config/i18n';
 
 const { dimensions, scale, updated } = metrics;
 const total = dimensions.length;
 
-// 画布几何。注意：这里的单位是 SVG 用户单位，不是 CSS 像素——
-// viewBox 会等比缩放到实际显示宽度，所以字号也按用户单位给（见 <style>）。
-// 画布做成横长而不是正方形，是因为 5 轴里有两根几乎水平伸出，
-// 英文标签（Physique / Research）在正方形画布里会顶到边缘。
+// 画布几何。单位是 SVG 用户单位，不是 CSS 像素——viewBox 会等比缩放到实际显示宽度，
+// 所以字号也按用户单位给（见 <style>）。画布做成横长而非正方形，是因为 5 轴里有两根
+// 几乎水平伸出，英文标签（Physique / Research）在正方形画布里会顶到边缘。
 const VIEW_W = 460;
-const VIEW_H = 380;
+const VIEW_H = 330;
 const CX = 230;
-const CY = 185;
+const CY = 175;
 const RADIUS = 116; // 满值半径
-const LABEL_RADIUS = 150; // 轴标签所在半径，比外环多 34，留给「轴名 + 数值」两行
+const LABEL_RADIUS = 130; // 轴标签半径，比满值环多 14：单行标签不压顶点即可
 
 const round = (value: number) => Math.round(value * 100) / 100;
 
@@ -57,49 +60,50 @@ const labels = dimensions.map((dimension, index) => {
   return {
     key: dimension.key,
     text: dimLabel(dimension.key),
-    value: format(dimension.value),
     x: round(point.x),
     y: round(point.y),
     anchor: Math.abs(point.cos) < 0.2 ? 'middle' : point.cos > 0 ? 'start' : 'end',
   };
 });
 
+// 数值不进 SVG，只进右侧表格；无障碍标签仍读全量数值
 const ariaLabel = `${ui.zh['radar.title']}：${dimensions
   .map((dimension) => `${dimLabel(dimension.key)} ${format(dimension.value)}`)
   .join('，')}（${ui.zh['radar.updated'].replace('{n}', updated)}）`;
 ---
 
-<figure class="radar" style={`--radar-count: ${total}`}>
+<figure class="radar">
   <figcaption class="radar-head">
     <h2 class="radar-title" data-i18n="radar.title">发展指数</h2>
     <p class="radar-updated" data-i18n="radar.updated" data-n={updated}>更新于 {updated}</p>
   </figcaption>
 
-  <svg class="radar-svg" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={ariaLabel}>
-    <g class="radar-grid">
-      {rings.map((points) => <polygon points={points} />)}
-    </g>
-    <g class="radar-axes">
-      {axes.map((point) => <line x1={CX} y1={CY} x2={round(point.x)} y2={round(point.y)} />)}
-    </g>
-    <polygon class="radar-area" points={area} />
-    <g class="radar-dots">
-      {vertices.map((point) => <circle cx={round(point.x)} cy={round(point.y)} r="2.6" />)}
-    </g>
-    <g class="radar-labels">
-      {labels.map((label) => <text class="radar-label" x={label.x} y={label.y} dy=".35em" text-anchor={label.anchor} data-i18n={`radar.dim.${label.key}`}>{label.text}</text>)}
-      {labels.map((label) => <text class="radar-value" x={label.x} y={label.y + 20} dy=".35em" text-anchor={label.anchor}>{label.value}</text>)}
-    </g>
-  </svg>
+  <div class="radar-body">
+    <svg class="radar-svg" viewBox={`0 0 ${VIEW_W} ${VIEW_H}`} role="img" aria-label={ariaLabel}>
+      <g class="radar-grid">
+        {rings.map((points) => <polygon points={points} />)}
+      </g>
+      <g class="radar-axes">
+        {axes.map((point) => <line x1={CX} y1={CY} x2={round(point.x)} y2={round(point.y)} />)}
+      </g>
+      <polygon class="radar-area" points={area} />
+      <g class="radar-dots">
+        {vertices.map((point) => <circle cx={round(point.x)} cy={round(point.y)} r="2.6" />)}
+      </g>
+      <g class="radar-labels">
+        {labels.map((label) => <text class="radar-label" x={label.x} y={label.y} dy=".35em" text-anchor={label.anchor} data-i18n={`radar.dim.${label.key}`}>{label.text}</text>)}
+      </g>
+    </svg>
 
-  <dl class="radar-list">
-    {dimensions.map((dimension) => (
-      <div class="radar-row">
-        <dt data-i18n={`radar.dim.${dimension.key}`}>{dimLabel(dimension.key)}</dt>
-        <dd>{format(dimension.value)}</dd>
-      </div>
-    ))}
-  </dl>
+    <dl class="radar-list">
+      {dimensions.map((dimension) => (
+        <div class="radar-row">
+          <dt data-i18n={`radar.dim.${dimension.key}`}>{dimLabel(dimension.key)}</dt>
+          <dd>{format(dimension.value)}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
 </figure>
 
 <style>
@@ -117,25 +121,29 @@ const ariaLabel = `${ui.zh['radar.title']}：${dimensions
   .radar-title { font-size: var(--font-size-small); font-weight: 600; letter-spacing: .06em; margin: 0; }
   .radar-updated { color: var(--color-text-muted); font-size: 12px; margin: 0; }
 
+  /* 两栏：图左、数值表右。右侧列固定宽度，让图形吃掉剩下全部宽度 */
+  .radar-body { align-items: center; display: grid; gap: var(--space-md); grid-template-columns: minmax(0, 1fr) 168px; margin-top: var(--space-md); }
+
   /* 字号写成 em，基准取 --font-size-base；在 SVG 里它等于用户单位，
-     随 viewBox 一起缩放，因此桌面端实际渲染约 15px，与全站小字同级。 */
-  .radar-svg { display: block; font-size: var(--font-size-base); height: auto; margin-top: var(--space-md); max-width: 420px; overflow: visible; width: 100%; }
+     随 viewBox 一起缩放，因此桌面端实际渲染约 17px，与全站正文同级。 */
+  .radar-svg { display: block; font-size: var(--font-size-base); height: auto; max-width: 100%; overflow: visible; width: 100%; }
   .radar-grid polygon { fill: none; stroke: var(--color-border); stroke-width: 1; }
   .radar-axes line { stroke: var(--color-border); stroke-width: 1; }
   .radar-area { fill: var(--color-accent); fill-opacity: .14; stroke: var(--color-accent); stroke-linejoin: round; stroke-width: 1.5; }
   .radar-dots circle { fill: var(--color-accent); }
   .radar-label { fill: var(--color-text-muted); font-family: inherit; font-size: 1em; }
-  .radar-value { fill: var(--color-text); font-family: Georgia, 'Times New Roman', serif; font-size: .9em; }
 
-  /* 数值文字列表：既是有声读屏的兜底，也符合本仓「文字优先」的设计原则 */
-  .radar-list { border-top: 1px solid var(--color-border); display: grid; gap: var(--space-sm); grid-template-columns: repeat(var(--radar-count), minmax(0, 1fr)); margin: var(--space-md) 0 0; padding: var(--space-sm) 0 0; }
-  .radar-row { display: grid; gap: .3em; min-width: 0; }
-  .radar-row dt { color: var(--color-text-muted); font-size: var(--font-size-small); overflow-wrap: anywhere; }
-  .radar-row dd { font-family: Georgia, 'Times New Roman', serif; font-size: 1.4rem; line-height: 1.1; margin: 0; }
+  /* 数值表：单列行式，分隔线与项目列表同一套语言 */
+  .radar-list { display: grid; margin: 0; }
+  .radar-row { align-items: baseline; border-top: 1px solid var(--color-border); display: flex; gap: var(--space-sm); justify-content: space-between; padding: .55rem 0; }
+  .radar-row:last-child { border-bottom: 1px solid var(--color-border); }
+  .radar-row dt { color: var(--color-text-muted); font-size: var(--font-size-small); }
+  .radar-row dd { font-family: Georgia, 'Times New Roman', serif; font-size: 1.2rem; line-height: 1; margin: 0; }
 
   @media (max-width: 600px) {
-    .radar-list { gap: var(--space-xs) var(--space-sm); }
-    .radar-row dt { font-size: 12px; }
-    .radar-row dd { font-size: 1.2rem; }
+    /* 窄屏回落成上下堆叠，图形占满宽度；字号在用户单位上放大一档，
+       抵消整体缩放，否则标签会小到看不清 */
+    .radar-body { gap: var(--space-sm); grid-template-columns: minmax(0, 1fr); }
+    .radar-svg { font-size: 1.12rem; }
   }
 </style>
