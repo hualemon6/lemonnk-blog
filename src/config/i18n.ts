@@ -24,6 +24,13 @@ export const ui = {
     'projects.contributor': '参与项目',
     'projects.view.experience': '体验',
     'projects.view.list': '列表',
+    'radar.title': '发展指数',
+    'radar.updated': '更新于 {n}',
+    'radar.dim.health': '健康',
+    'radar.dim.shape': '身材',
+    'radar.dim.wealth': '财商',
+    'radar.dim.study': '学业',
+    'radar.dim.research': '科研',
   },
   en: {
     'nav.writing': 'Writing',
@@ -46,6 +53,13 @@ export const ui = {
     'projects.contributor': 'Contributor',
     'projects.view.experience': 'Experience',
     'projects.view.list': 'List',
+    'radar.title': 'Growth Index',
+    'radar.updated': 'Updated {n}',
+    'radar.dim.health': 'Health',
+    'radar.dim.shape': 'Physique',
+    'radar.dim.wealth': 'Wealth',
+    'radar.dim.study': 'Study',
+    'radar.dim.research': 'Research',
   },
 } as const;
 

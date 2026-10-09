@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import RadarChart from '../components/RadarChart.astro';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 import about from '../data/about.json';
 import { path } from '../utils/path';
@@ -28,6 +29,7 @@ const facts = [
         </nav>
       </div>
     </header>
+    <RadarChart />
     {content && <div class="about-content prose" set:html={content} />}
   </article>
 </Layout>
