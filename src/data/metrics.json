@@ -1,11 +1,11 @@
 {
-  "updated": "2026-08-11",
+  "updated": "2026-10-09",
   "scale": 10,
   "dimensions": [
-    { "key": "health", "value": 7.5 },
-    { "key": "shape", "value": 6.5 },
-    { "key": "wealth", "value": 5 },
-    { "key": "study", "value": 8.5 },
-    { "key": "research", "value": 7 }
+    { "key": "health", "value": 1 },
+    { "key": "shape", "value": 1 },
+    { "key": "wealth", "value": 1 },
+    { "key": "study", "value": 1 },
+    { "key": "research", "value": 1 }
   ]
 }
