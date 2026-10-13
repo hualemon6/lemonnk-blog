@@ -1,11 +1,11 @@
 ---
-title: 'Code as Policies：让 LLM 写代码控制机器人'
+title: 'Code as Policies: Language Model Programs for Embodied Control'
 pubDate: 2026-10-13
 tags: ['AI', 'Robotics']
 mode: me
 ---
 
-2022 年 9 月公开 · ICRA 2023
+2022 年 9 月公开 · ICRA 2023 · [论文链接](https://arxiv.org/abs/2209.07753)
 
 这次的 Paper 是 CaP，CaP 是 LLM 进入具身机器人控制领域的代表性早期工作，主要贡献在于提出了"代码作为策略"（Code as Policies）的方法，使用大型语言模型，生成可执行程序，作为根据自然语言指令控制机器人的策略。
 
